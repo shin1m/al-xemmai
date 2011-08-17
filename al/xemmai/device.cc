@@ -12,8 +12,7 @@ namespace xemmai
 void t_device::f_check_error() const
 {
 	ALCenum error = alcGetError(v_entry->first);
-	if (error == ALC_NO_ERROR) return;
-	t_throwable::f_throw(L"alc error.");
+	if (error != ALC_NO_ERROR) f_throw<t_alc_error>(alcGetString(v_entry->first, error), error);
 }
 
 t_transfer t_device::f_create_buffer(ALuint a_id)

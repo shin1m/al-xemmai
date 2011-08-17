@@ -31,19 +31,24 @@ using ::xemmai::t_bytes;
 using ::xemmai::portable::f_convert;
 
 class t_extension;
+class t_error;
+struct t_alc_error;
+struct t_alut_error;
 class t_device;
 class t_context;
 class t_source;
 class t_buffer;
 
+template<typename T_error>
+void f_throw(const ALchar* a_message, ALenum a_error);
+
 t_transfer f_tuple(const t_transfer& a_0, const t_transfer& a_1, const t_transfer& a_2);
 t_transfer f_tuple(const t_transfer& a_0, const t_transfer& a_1, const t_transfer& a_2, const t_transfer& a_3, const t_transfer& a_4, const t_transfer& a_5);
 
-void f_check_error();
-void f_alut_throw_error();
-
 class t_session
 {
+	template<typename T_error>
+	friend void f_throw(const ALchar* a_message, ALenum a_error);
 	friend class t_device;
 	friend class t_context;
 
@@ -71,6 +76,9 @@ class t_extension : public ::xemmai::t_extension
 {
 	template<typename T, typename T_super> friend class t_define;
 
+	t_slot v_type_error;
+	t_slot v_type_alc_error;
+	t_slot v_type_alut_error;
 	t_slot v_type_device;
 	t_slot v_type_context;
 	t_slot v_type_source;
@@ -101,6 +109,24 @@ public:
 };
 
 template<>
+inline void t_extension::f_type__<t_error>(const t_transfer& a_type)
+{
+	v_type_error = a_type;
+}
+
+template<>
+inline void t_extension::f_type__<t_alc_error>(const t_transfer& a_type)
+{
+	v_type_alc_error = a_type;
+}
+
+template<>
+inline void t_extension::f_type__<t_alut_error>(const t_transfer& a_type)
+{
+	v_type_alut_error = a_type;
+}
+
+template<>
 inline void t_extension::f_type__<t_device>(const t_transfer& a_type)
 {
 	v_type_device = a_type;
@@ -128,6 +154,24 @@ template<>
 inline const t_extension* t_extension::f_extension<t_extension>() const
 {
 	return this;
+}
+
+template<>
+inline t_object* t_extension::f_type<t_error>() const
+{
+	return v_type_error;
+}
+
+template<>
+inline t_object* t_extension::f_type<t_alc_error>() const
+{
+	return v_type_alc_error;
+}
+
+template<>
+inline t_object* t_extension::f_type<t_alut_error>() const
+{
+	return v_type_alut_error;
 }
 
 template<>

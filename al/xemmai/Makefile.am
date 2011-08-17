@@ -17,6 +17,8 @@ endif
 al_la_LIBADD = $(OPENAL_LIBS) $(ALUT_LIBS) $(XEMMAI_LIBS)
 al_la_SOURCES = \
 	cast.h \
+	error.h \
+	error.cc \
 	device.h \
 	device.cc \
 	context.h \

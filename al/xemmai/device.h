@@ -1,7 +1,7 @@
 #ifndef AL__XEMMAI__DEVICE_H
 #define AL__XEMMAI__DEVICE_H
 
-#include "al.h"
+#include "error.h"
 
 namespace al
 {
@@ -69,42 +69,42 @@ public:
 		alcMakeContextCurrent(v_default);
 		ALuint id;
 		alGenBuffers(1, &id);
-		al::xemmai::f_check_error();
+		t_error::f_check();
 		return f_create_buffer(id);
 	}
 	t_transfer f_create_buffer_from_file(const std::wstring& a_path)
 	{
 		alcMakeContextCurrent(v_default);
 		ALuint id = alutCreateBufferFromFile(f_convert(a_path).c_str());
-		if (id == AL_NONE) f_alut_throw_error();
+		if (id == AL_NONE) t_alut_error::f_throw();
 		return f_create_buffer(id);
 	}
 	t_transfer f_create_buffer_from_file_image(const t_bytes& a_data)
 	{
 		alcMakeContextCurrent(v_default);
 		ALuint id = alutCreateBufferFromFileImage(&a_data[0], a_data.f_size());
-		if (id == AL_NONE) f_alut_throw_error();
+		if (id == AL_NONE) t_alut_error::f_throw();
 		return f_create_buffer(id);
 	}
 	t_transfer f_create_buffer_hello_world()
 	{
 		alcMakeContextCurrent(v_default);
 		ALuint id = alutCreateBufferHelloWorld();
-		if (id == AL_NONE) f_alut_throw_error();
+		if (id == AL_NONE) t_alut_error::f_throw();
 		return f_create_buffer(id);
 	}
 	t_transfer f_create_buffer_waveform(ALenum a_shape, ALfloat a_frequency, ALfloat a_phase, ALfloat a_duration)
 	{
 		alcMakeContextCurrent(v_default);
 		ALuint id = alutCreateBufferWaveform(a_shape, a_frequency, a_phase, a_duration);
-		if (id == AL_NONE) f_alut_throw_error();
+		if (id == AL_NONE) t_alut_error::f_throw();
 		return f_create_buffer(id);
 	}
 	std::wstring f_get_mime_types(ALenum a_loader) const
 	{
 		alcMakeContextCurrent(v_default);
 		const char* types = alutGetMIMETypes(a_loader);
-		if (types == NULL) f_alut_throw_error();
+		if (types == NULL) t_alut_error::f_throw();
 		return f_convert(std::string(types));
 	}
 };

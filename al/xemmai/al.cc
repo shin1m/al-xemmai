@@ -37,20 +37,6 @@ t_transfer f_tuple(const t_transfer& a_0, const t_transfer& a_1, const t_transfe
 	return p;
 }
 
-void f_check_error()
-{
-	ALenum error = alGetError();
-	if (error == AL_NO_ERROR) return;
-	t_throwable::f_throw(L"al error.");
-}
-
-void f_alut_throw_error()
-{
-	ALenum error = alutGetError();
-	if (error == ALUT_ERROR_NO_ERROR) return;
-	t_throwable::f_throw(L"alut error.");
-}
-
 XEMMAI__PORTABLE__THREAD t_session* t_session::v_instance;
 
 namespace
@@ -90,15 +76,11 @@ void f_main(t_extension* a_extension, const t_value& a_callable)
 	a_callable();
 }
 
-std::wstring f_alut_get_error_string(ALenum a_error)
-{
-	return f_convert(std::string(alutGetErrorString(a_error)));
-}
-
 }
 
 t_extension::t_extension(t_object* a_module) : ::xemmai::t_extension(a_module)
 {
+	t_type_of<t_error>::f_define(this);
 	t_type_of<t_device>::f_define(this);
 	t_type_of<t_context>::f_define(this);
 	t_type_of<t_source>::f_define(this);
@@ -187,8 +169,6 @@ t_extension::t_extension(t_object* a_module) : ::xemmai::t_extension(a_module)
 	a_module->f_put(t_symbol::f_instantiate(L"ALC_CAPTURE_DEVICE_SPECIFIER"), f_as(ALC_CAPTURE_DEVICE_SPECIFIER));
 	a_module->f_put(t_symbol::f_instantiate(L"ALC_CAPTURE_DEFAULT_DEVICE_SPECIFIER"), f_as(ALC_CAPTURE_DEFAULT_DEVICE_SPECIFIER));
 	a_module->f_put(t_symbol::f_instantiate(L"ALC_CAPTURE_SAMPLES"), f_as(ALC_CAPTURE_SAMPLES));
-	f_define<ALenum (*)(), alutGetError>(this, L"alut_get_error");
-	f_define<std::wstring (*)(ALenum), f_alut_get_error_string>(this, L"alut_get_error_string");
 	a_module->f_put(t_symbol::f_instantiate(L"ALUT_ERROR_NO_ERROR"), f_as(ALUT_ERROR_NO_ERROR));
 	a_module->f_put(t_symbol::f_instantiate(L"ALUT_ERROR_OUT_OF_MEMORY"), f_as(ALUT_ERROR_OUT_OF_MEMORY));
 	a_module->f_put(t_symbol::f_instantiate(L"ALUT_ERROR_INVALID_ENUM"), f_as(ALUT_ERROR_INVALID_ENUM));
@@ -219,6 +199,9 @@ t_extension::t_extension(t_object* a_module) : ::xemmai::t_extension(a_module)
 
 void t_extension::f_scan(t_scan a_scan)
 {
+	a_scan(v_type_error);
+	a_scan(v_type_alc_error);
+	a_scan(v_type_alut_error);
 	a_scan(v_type_device);
 	a_scan(v_type_context);
 	a_scan(v_type_source);

@@ -30,39 +30,39 @@ public:
 	void f_delete()
 	{
 		alDeleteBuffers(1, &v_entry->first);
-		f_check_error();
+		t_error::f_check();
 		delete this;
 	}
 	void f_data(ALenum a_format, const t_bytes& a_data, ALsizei a_frequency)
 	{
 		alBufferData(v_entry->first, a_format, &a_data[0], a_data.f_size(), a_frequency);
-		f_check_error();
+		t_error::f_check();
 	}
 	void f_setf(ALenum a_parameter, ALfloat a_value)
 	{
 		alBufferf(v_entry->first, a_parameter, a_value);
-		f_check_error();
+		t_error::f_check();
 	}
 	void f_set3f(ALenum a_parameter, ALfloat a_value1, ALfloat a_value2, ALfloat a_value3)
 	{
 		alBuffer3f(v_entry->first, a_parameter, a_value1, a_value2, a_value3);
-		f_check_error();
+		t_error::f_check();
 	}
 	void f_seti(ALenum a_parameter, ALint a_value)
 	{
 		alBufferi(v_entry->first, a_parameter, a_value);
-		f_check_error();
+		t_error::f_check();
 	}
 	void f_set3i(ALenum a_parameter, ALint a_value1, ALint a_value2, ALint a_value3)
 	{
 		alBuffer3i(v_entry->first, a_parameter, a_value1, a_value2, a_value3);
-		f_check_error();
+		t_error::f_check();
 	}
 	ALfloat f_getf(ALenum a_parameter) const
 	{
 		ALfloat value;
 		alGetBufferf(v_entry->first, a_parameter, &value);
-		f_check_error();
+		t_error::f_check();
 		return value;
 	}
 	t_transfer f_get3f(ALenum a_parameter) const
@@ -71,14 +71,14 @@ public:
 		ALfloat value2;
 		ALfloat value3;
 		alGetBuffer3f(v_entry->first, a_parameter, &value1, &value2, &value3);
-		f_check_error();
+		t_error::f_check();
 		return f_tuple(t_transfer(value1), t_transfer(value2), t_transfer(value3));
 	}
 	ALint f_geti(ALenum a_parameter) const
 	{
 		ALint value;
 		alGetBufferi(v_entry->first, a_parameter, &value);
-		f_check_error();
+		t_error::f_check();
 		return value;
 	}
 	t_transfer f_get3i(ALenum a_parameter) const
@@ -87,7 +87,7 @@ public:
 		ALint value2;
 		ALint value3;
 		alGetBuffer3i(v_entry->first, a_parameter, &value1, &value2, &value3);
-		f_check_error();
+		t_error::f_check();
 		return f_tuple(t_transfer(value1), t_transfer(value2), t_transfer(value3));
 	}
 };

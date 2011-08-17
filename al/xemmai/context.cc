@@ -21,7 +21,7 @@ t_transfer t_context::f_create_source()
 	f_make_current();
 	ALuint id;
 	alGenSources(1, &id);
-	f_check_error();
+	t_error::f_check();
 	t_transfer object = t_object::f_allocate(session->v_extension->f_type<t_source>());
 	object.f_pointer__(new t_source(this, v_sources.insert(std::make_pair(id, static_cast<t_object*>(object))).first));
 	return object;
@@ -66,6 +66,10 @@ void t_type_of<t_context>::f_define(t_extension* a_extension)
 		(L"get_listener3i", t_member<t_transfer (t_context::*)(ALenum) const, &t_context::f_get_listener3i>())
 		(L"get_listeneriv", t_member<t_transfer (t_context::*)(ALenum) const, &t_context::f_get_listeneriv>())
 		(L"create_source", t_member<t_transfer (t_context::*)(), &t_context::f_create_source>())
+		(L"source_play", t_context::f_source_do<alSourcePlayv>)
+		(L"source_stop", t_context::f_source_do<alSourceStopv>)
+		(L"source_rewind", t_context::f_source_do<alSourceRewindv>)
+		(L"source_pause", t_context::f_source_do<alSourcePausev>)
 		(L"doppler_factor", t_member<void (t_context::*)(ALfloat), &t_context::f_doppler_factor>())
 		(L"doppler_velocity", t_member<void (t_context::*)(ALfloat), &t_context::f_doppler_velocity>())
 		(L"speed_of_sound", t_member<void (t_context::*)(ALfloat), &t_context::f_speed_of_sound>())
