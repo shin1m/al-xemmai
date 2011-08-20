@@ -37,13 +37,15 @@ t_transfer f_tuple(const t_transfer& a_0, const t_transfer& a_1, const t_transfe
 }
 
 t_mutex t_session::v_mutex;
+bool t_session::v_running = false;
 XEMMAI__PORTABLE__THREAD t_session* t_session::v_instance;
 
 t_session::t_session(t_extension* a_extension) : v_extension(a_extension)
 {
 	t_scoped_lock lock(v_mutex);
-	if (v_instance) t_throwable::f_throw(L"main already running.");
+	if (v_running) t_throwable::f_throw(L"main already running.");
 	if (alutInitWithoutContext(NULL, NULL) != AL_TRUE) t_throwable::f_throw(L"alutInitWithoutContext failed.");
+	v_running = true;
 	v_instance = this;
 }
 
@@ -51,6 +53,7 @@ t_session::~t_session()
 {
 	while (!v_devices.empty()) f_as<t_device&>(v_devices.begin()->second).f_close();
 	t_scoped_lock lock(v_mutex);
+	v_running = false;
 	v_instance = 0;
 	if (alutExit() != AL_TRUE) t_throwable::f_throw(L"alutExit failed.");
 }

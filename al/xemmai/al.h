@@ -54,6 +54,7 @@ class t_session
 	friend class t_context;
 
 	static t_mutex v_mutex;
+	static bool v_running;
 	static XEMMAI__PORTABLE__THREAD t_session* v_instance;
 
 	t_extension* v_extension;
