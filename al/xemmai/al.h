@@ -28,6 +28,7 @@ using ::xemmai::t_define;
 using ::xemmai::f_global;
 using ::xemmai::t_throwable;
 using ::xemmai::t_bytes;
+using ::xemmai::portable::t_mutex;
 using ::xemmai::portable::f_convert;
 
 class t_extension;
@@ -52,6 +53,7 @@ class t_session
 	friend class t_device;
 	friend class t_context;
 
+	static t_mutex v_mutex;
 	static XEMMAI__PORTABLE__THREAD t_session* v_instance;
 
 	t_extension* v_extension;

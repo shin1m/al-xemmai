@@ -11,7 +11,6 @@ namespace xemmai
 using ::xemmai::t_tuple;
 using ::xemmai::t_symbol;
 using ::xemmai::f_define;
-using ::xemmai::portable::t_mutex;
 using ::xemmai::portable::t_scoped_lock;
 
 t_transfer f_tuple(const t_transfer& a_0, const t_transfer& a_1, const t_transfer& a_2)
@@ -37,34 +36,23 @@ t_transfer f_tuple(const t_transfer& a_0, const t_transfer& a_1, const t_transfe
 	return p;
 }
 
+t_mutex t_session::v_mutex;
 XEMMAI__PORTABLE__THREAD t_session* t_session::v_instance;
-
-namespace
-{
-
-t_mutex v_mutex;
-bool v_running;
-
-}
 
 t_session::t_session(t_extension* a_extension) : v_extension(a_extension)
 {
-	{
-		t_scoped_lock lock(v_mutex);
-		if (v_running) t_throwable::f_throw(L"main already running.");
-		v_running = true;
-	}
-	v_instance = this;
+	t_scoped_lock lock(v_mutex);
+	if (v_instance) t_throwable::f_throw(L"main already running.");
 	if (alutInitWithoutContext(NULL, NULL) != AL_TRUE) t_throwable::f_throw(L"alutInitWithoutContext failed.");
+	v_instance = this;
 }
 
 t_session::~t_session()
 {
 	while (!v_devices.empty()) f_as<t_device&>(v_devices.begin()->second).f_close();
-	if (alutExit() != AL_TRUE) t_throwable::f_throw(L"alutExit failed.");
-	v_instance = 0;
 	t_scoped_lock lock(v_mutex);
-	v_running = false;
+	v_instance = 0;
+	if (alutExit() != AL_TRUE) t_throwable::f_throw(L"alutExit failed.");
 }
 
 namespace
