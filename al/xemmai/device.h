@@ -131,7 +131,7 @@ struct t_type_of<t_device> : t_type
 	}
 	virtual t_type* f_derive(t_object* a_this);
 	virtual void f_finalize(t_object* a_this);
-	virtual void f_construct(t_object* a_class, t_slot* a_stack, size_t a_n);
+	virtual t_transfer f_construct(t_object* a_class, t_slot* a_stack, size_t a_n);
 	virtual void f_instantiate(t_object* a_class, t_slot* a_stack, size_t a_n);
 };
 

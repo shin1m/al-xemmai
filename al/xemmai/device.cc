@@ -80,14 +80,15 @@ void t_type_of<t_device>::f_finalize(t_object* a_this)
 	assert(!p);
 }
 
-void t_type_of<t_device>::f_construct(t_object* a_class, t_slot* a_stack, size_t a_n)
+t_transfer t_type_of<t_device>::f_construct(t_object* a_class, t_slot* a_stack, size_t a_n)
 {
-	t_construct_with<t_transfer (*)(t_object*, const std::wstring*), t_device::f_construct>::f_call(a_class, a_stack, a_n);
+	return t_construct_with<t_transfer (*)(t_object*, const std::wstring*), t_device::f_construct>::f_call(a_class, a_stack, a_n);
 }
 
 void t_type_of<t_device>::f_instantiate(t_object* a_class, t_slot* a_stack, size_t a_n)
 {
-	f_construct(a_class, a_stack, a_n);
+	a_stack[0].f_construct(f_construct(a_class, a_stack, a_n));
+	for (size_t i = 1; i <= a_n; ++i) a_stack[i] = 0;
 }
 
 }
