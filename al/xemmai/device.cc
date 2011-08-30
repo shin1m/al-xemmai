@@ -9,7 +9,7 @@ namespace al
 namespace xemmai
 {
 
-void t_device::f_check_error() const
+void t_base_device::f_check_error() const
 {
 	ALCenum error = alcGetError(v_entry->first);
 	if (error != ALC_NO_ERROR) f_throw<t_alc_error>(alcGetString(v_entry->first, error), error);
@@ -46,6 +46,12 @@ t_transfer t_device::f_create_context()
 	return object;
 }
 
+void t_capture_device::f_close()
+{
+	if (alcCaptureCloseDevice(v_entry->first) != ALC_TRUE) t_throwable::f_throw(L"alcCaptureCloseDevice failed.");
+	delete this;
+}
+
 }
 
 }
@@ -53,13 +59,42 @@ t_transfer t_device::f_create_context()
 namespace xemmai
 {
 
+void t_type_of<t_base_device>::f_define(t_extension* a_extension)
+{
+	t_define<t_base_device, t_object>(a_extension, L"BaseDevice")
+		(L"get_string", t_member<std::wstring (t_base_device::*)(ALenum) const, &t_base_device::f_get_string>())
+		(L"get_integer", t_member<ALint (t_base_device::*)(ALenum) const, &t_base_device::f_get_integer>())
+	;
+}
+
+t_type* t_type_of<t_base_device>::f_derive(t_object* a_this)
+{
+	return 0;
+}
+
+void t_type_of<t_base_device>::f_finalize(t_object* a_this)
+{
+	t_base_device* p = static_cast<t_base_device*>(a_this->f_pointer());
+	assert(!p);
+}
+
+t_transfer t_type_of<t_base_device>::f_construct(t_object* a_class, t_slot* a_stack, size_t a_n)
+{
+	t_throwable::f_throw(L"uninstantiatable.");
+	return t_transfer();
+}
+
+void t_type_of<t_base_device>::f_instantiate(t_object* a_class, t_slot* a_stack, size_t a_n)
+{
+	a_stack[0].f_construct(f_construct(a_class, a_stack, a_n));
+	for (size_t i = 1; i <= a_n; ++i) a_stack[i] = 0;
+}
+
 void t_type_of<t_device>::f_define(t_extension* a_extension)
 {
-	t_define<t_device, t_object>(a_extension, L"Device")
+	t_define<t_device, t_base_device>(a_extension, L"Device")
 		(L"close", t_member<void (t_device::*)(), &t_device::f_close>())
 		(L"create_context", t_member<t_transfer (t_device::*)(), &t_device::f_create_context>())
-		(L"get_string", t_member<std::wstring (t_device::*)(ALenum) const, &t_device::f_get_string>())
-		(L"get_integer", t_member<ALint (t_device::*)(ALenum) const, &t_device::f_get_integer>())
 		(L"create_buffer", t_member<t_transfer (t_device::*)(), &t_device::f_create_buffer>())
 		(L"create_buffer_from_file", t_member<t_transfer (t_device::*)(const std::wstring&), &t_device::f_create_buffer_from_file>())
 		(L"create_buffer_from_file_image", t_member<t_transfer (t_device::*)(const t_bytes&), &t_device::f_create_buffer_from_file_image>())
@@ -69,26 +104,24 @@ void t_type_of<t_device>::f_define(t_extension* a_extension)
 	;
 }
 
-t_type* t_type_of<t_device>::f_derive(t_object* a_this)
-{
-	return 0;
-}
-
-void t_type_of<t_device>::f_finalize(t_object* a_this)
-{
-	t_device* p = static_cast<t_device*>(a_this->f_pointer());
-	assert(!p);
-}
-
 t_transfer t_type_of<t_device>::f_construct(t_object* a_class, t_slot* a_stack, size_t a_n)
 {
 	return t_construct_with<t_transfer (*)(t_object*, const std::wstring*), t_device::f_construct>::f_call(a_class, a_stack, a_n);
 }
 
-void t_type_of<t_device>::f_instantiate(t_object* a_class, t_slot* a_stack, size_t a_n)
+void t_type_of<t_capture_device>::f_define(t_extension* a_extension)
 {
-	a_stack[0].f_construct(f_construct(a_class, a_stack, a_n));
-	for (size_t i = 1; i <= a_n; ++i) a_stack[i] = 0;
+	t_define<t_capture_device, t_base_device>(a_extension, L"CaptureDevice")
+		(L"close", t_member<void (t_capture_device::*)(), &t_capture_device::f_close>())
+		(L"start", t_member<void (t_capture_device::*)(), &t_capture_device::f_start>())
+		(L"stop", t_member<void (t_capture_device::*)(), &t_capture_device::f_stop>())
+		(L"samples", t_member<void (t_capture_device::*)(t_bytes&, ALCsizei), &t_capture_device::f_samples>())
+	;
+}
+
+t_transfer t_type_of<t_capture_device>::f_construct(t_object* a_class, t_slot* a_stack, size_t a_n)
+{
+	return t_construct_with<t_transfer (*)(t_object*, const std::wstring*, ALCuint, ALCenum, ALCsizei), t_capture_device::f_construct>::f_call(a_class, a_stack, a_n);
 }
 
 }

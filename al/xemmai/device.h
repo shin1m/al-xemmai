@@ -9,18 +9,43 @@ namespace al
 namespace xemmai
 {
 
-class t_device
+class t_base_device
+{
+protected:
+	std::map<ALCdevice*, t_scoped>::iterator v_entry;
+
+	t_base_device(std::map<ALCdevice*, t_scoped>::iterator a_entry) : v_entry(a_entry)
+	{
+	}
+	void f_check_error() const;
+
+public:
+	std::wstring f_get_string(ALCenum a_parameter) const
+	{
+		const ALCchar* p = alcGetString(v_entry->first, a_parameter);
+		f_check_error();
+		return f_convert(std::string(p));
+	}
+	ALCint f_get_integer(ALCenum a_parameter) const
+	{
+		ALCint data;
+		alcGetIntegerv(v_entry->first, a_parameter, 1, &data);
+		f_check_error();
+		return data;
+	}
+};
+
+class t_device : public t_base_device
 {
 	friend class t_context;
 	friend class t_source;
 	friend class t_buffer;
 
-	std::map<ALCdevice*, t_scoped>::iterator v_entry;
 	ALCcontext* v_default;
 	std::map<ALCcontext*, t_scoped> v_contexts;
 	std::map<ALuint, t_scoped> v_buffers;
 
-	t_device(std::map<ALCdevice*, t_scoped>::iterator a_entry, ALCcontext* a_default) : v_entry(a_entry), v_default(a_default)
+	t_device(std::map<ALCdevice*, t_scoped>::iterator a_entry, ALCcontext* a_default) : t_base_device(a_entry), v_default(a_default)
 	{
 		alcMakeContextCurrent(v_default);
 	}
@@ -30,7 +55,6 @@ class t_device
 		t_session* session = t_session::f_instance();
 		session->v_devices.erase(v_entry);
 	}
-	void f_check_error() const;
 	t_transfer f_create_buffer(ALuint a_id);
 
 public:
@@ -51,19 +75,6 @@ public:
 
 	void f_close();
 	t_transfer f_create_context();
-	std::wstring f_get_string(ALCenum a_parameter) const
-	{
-		const ALCchar* p = alcGetString(v_entry->first, a_parameter);
-		f_check_error();
-		return f_convert(std::string(p));
-	}
-	ALCint f_get_integer(ALCenum a_parameter) const
-	{
-		ALCint data;
-		alcGetIntegerv(v_entry->first, a_parameter, 1, &data);
-		f_check_error();
-		return data;
-	}
 	t_transfer f_create_buffer()
 	{
 		alcMakeContextCurrent(v_default);
@@ -109,6 +120,48 @@ public:
 	}
 };
 
+class t_capture_device : public t_base_device
+{
+	t_capture_device(std::map<ALCdevice*, t_scoped>::iterator a_entry) : t_base_device(a_entry)
+	{
+	}
+	~t_capture_device()
+	{
+		v_entry->second.f_pointer__(0);
+		t_session* session = t_session::f_instance();
+		session->v_capture_devices.erase(v_entry);
+	}
+
+public:
+	static t_transfer f_construct(t_object* a_class, const std::wstring* a_name, ALCuint a_frequency, ALCenum a_format, ALCsizei a_buffer)
+	{
+		t_session* session = t_session::f_instance();
+		ALCdevice* device = alcCaptureOpenDevice(a_name ? f_convert(*a_name).c_str() : NULL, a_frequency, a_format, a_buffer);
+		if (device == NULL) t_throwable::f_throw(L"alcCaptureOpenDevice failed.");
+		t_transfer object = t_object::f_allocate(a_class);
+		object.f_pointer__(new t_capture_device(session->v_capture_devices.insert(std::make_pair(device, static_cast<t_object*>(object))).first));
+		return object;
+	}
+
+	void f_close();
+	void f_start()
+	{
+		alcCaptureStart(v_entry->first);
+		f_check_error();
+	}
+	void f_stop()
+	{
+		alcCaptureStop(v_entry->first);
+		f_check_error();
+	}
+	void f_samples(t_bytes& a_buffer, ALCsizei a_samples)
+	{
+		if (a_buffer.f_size() < a_samples) t_throwable::f_throw(L"not enough buffer.");
+		alcCaptureSamples(v_entry->first, &a_buffer[0], a_samples);
+		f_check_error();
+	}
+};
+
 }
 
 }
@@ -116,10 +169,12 @@ public:
 namespace xemmai
 {
 
+using al::xemmai::t_base_device;
 using al::xemmai::t_device;
+using al::xemmai::t_capture_device;
 
 template<>
-struct t_type_of<t_device> : t_type
+struct t_type_of<t_base_device> : t_type
 {
 #include "cast.h"
 	typedef al::xemmai::t_extension t_extension;
@@ -133,6 +188,28 @@ struct t_type_of<t_device> : t_type
 	virtual void f_finalize(t_object* a_this);
 	virtual t_transfer f_construct(t_object* a_class, t_slot* a_stack, size_t a_n);
 	virtual void f_instantiate(t_object* a_class, t_slot* a_stack, size_t a_n);
+};
+
+template<>
+struct t_type_of<t_device> : t_type_of<t_base_device>
+{
+	static void f_define(t_extension* a_extension);
+
+	t_type_of(const t_transfer& a_module, const t_transfer& a_super) : t_type_of<t_base_device>(a_module, a_super)
+	{
+	}
+	virtual t_transfer f_construct(t_object* a_class, t_slot* a_stack, size_t a_n);
+};
+
+template<>
+struct t_type_of<t_capture_device> : t_type_of<t_base_device>
+{
+	static void f_define(t_extension* a_extension);
+
+	t_type_of(const t_transfer& a_module, const t_transfer& a_super) : t_type_of<t_base_device>(a_module, a_super)
+	{
+	}
+	virtual t_transfer f_construct(t_object* a_class, t_slot* a_stack, size_t a_n);
 };
 
 }

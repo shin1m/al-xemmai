@@ -35,7 +35,9 @@ class t_extension;
 class t_error;
 struct t_alc_error;
 struct t_alut_error;
+class t_base_device;
 class t_device;
+class t_capture_device;
 class t_context;
 class t_source;
 class t_buffer;
@@ -51,6 +53,7 @@ class t_session
 	template<typename T_error>
 	friend void f_throw(const ALchar* a_message, ALenum a_error);
 	friend class t_device;
+	friend class t_capture_device;
 	friend class t_context;
 
 	static t_mutex v_mutex;
@@ -59,6 +62,7 @@ class t_session
 
 	t_extension* v_extension;
 	std::map<ALCdevice*, t_scoped> v_devices;
+	std::map<ALCdevice*, t_scoped> v_capture_devices;
 
 public:
 	static t_session* f_instance()
@@ -82,7 +86,9 @@ class t_extension : public ::xemmai::t_extension
 	t_slot v_type_error;
 	t_slot v_type_alc_error;
 	t_slot v_type_alut_error;
+	t_slot v_type_base_device;
 	t_slot v_type_device;
+	t_slot v_type_capture_device;
 	t_slot v_type_context;
 	t_slot v_type_source;
 	t_slot v_type_buffer;
@@ -130,9 +136,21 @@ inline void t_extension::f_type__<t_alut_error>(const t_transfer& a_type)
 }
 
 template<>
+inline void t_extension::f_type__<t_base_device>(const t_transfer& a_type)
+{
+	v_type_base_device = a_type;
+}
+
+template<>
 inline void t_extension::f_type__<t_device>(const t_transfer& a_type)
 {
 	v_type_device = a_type;
+}
+
+template<>
+inline void t_extension::f_type__<t_capture_device>(const t_transfer& a_type)
+{
+	v_type_capture_device = a_type;
 }
 
 template<>
@@ -178,9 +196,21 @@ inline t_object* t_extension::f_type<t_alut_error>() const
 }
 
 template<>
+inline t_object* t_extension::f_type<t_base_device>() const
+{
+	return v_type_base_device;
+}
+
+template<>
 inline t_object* t_extension::f_type<t_device>() const
 {
 	return v_type_device;
+}
+
+template<>
+inline t_object* t_extension::f_type<t_capture_device>() const
+{
+	return v_type_capture_device;
 }
 
 template<>

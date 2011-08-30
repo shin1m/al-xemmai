@@ -9,7 +9,7 @@ void t_type_of<t_buffer>::f_define(t_extension* a_extension)
 {
 	t_define<t_buffer, t_object>(a_extension, L"Buffer")
 		(L"delete", t_member<void (t_buffer::*)(), &t_buffer::f_delete>())
-		(L"data", t_member<void (t_buffer::*)(ALenum, const t_bytes&, ALsizei), &t_buffer::f_data>())
+		(L"data", t_member<void (t_buffer::*)(ALenum, const t_bytes&, ALsizei, ALsizei), &t_buffer::f_data>())
 		(L"setf", t_member<void (t_buffer::*)(ALenum, ALfloat), &t_buffer::f_setf>())
 		(L"set3f", t_member<void (t_buffer::*)(ALenum, ALfloat, ALfloat, ALfloat), &t_buffer::f_set3f>())
 		(L"seti", t_member<void (t_buffer::*)(ALenum, ALint), &t_buffer::f_seti>())
