@@ -1,10 +1,10 @@
-AC_INIT([al-xemmai], [201108])
+AC_INIT([al-xemmai], [201109])
 AM_INIT_AUTOMAKE([foreign nostdinc dist-bzip2 no-dist-gzip])
 AC_CONFIG_SRCDIR([al/xemmai/al.cc])
 
 PKG_CHECK_MODULES([OPENAL], [openal >= 1.1])
 PKG_CHECK_MODULES([ALUT], [freealut >= 1.1])
-XEMMAI_USE=xemmai-201108
+XEMMAI_USE=xemmai-201109
 PKG_CHECK_MODULES([XEMMAI], [${XEMMAI_USE}], [
 	XEMMAI_MODULE_PATH=`pkg-config --variable=module_path ${XEMMAI_USE}`
 ])
