@@ -232,11 +232,7 @@ void t_extension::f_scan(t_scan a_scan)
 
 }
 
-#ifdef _MSC_VER
-extern "C" __declspec(dllexport) xemmai::t_extension* f_factory(xemmai::t_object* a_module)
-#else
-extern "C" xemmai::t_extension* f_factory(xemmai::t_object* a_module)
-#endif
+XEMMAI__MODULE__FACTORY(xemmai::t_object* a_module)
 {
 	return new al::xemmai::t_extension(a_module);
 }
