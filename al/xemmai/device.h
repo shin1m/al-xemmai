@@ -45,10 +45,7 @@ class t_device : public t_base_device
 	std::map<ALCcontext*, t_scoped> v_contexts;
 	std::map<ALuint, t_scoped> v_buffers;
 
-	t_device(std::map<ALCdevice*, t_scoped>::iterator a_entry, ALCcontext* a_default) : t_base_device(a_entry), v_default(a_default)
-	{
-		alcMakeContextCurrent(v_default);
-	}
+	t_device(std::map<ALCdevice*, t_scoped>::iterator a_entry, ALCcontext* a_default);
 	~t_device()
 	{
 		v_entry->second.f_pointer__(0);
@@ -74,6 +71,10 @@ public:
 	}
 
 	void f_close();
+	t_transfer f_default_context() const
+	{
+		return v_contexts.find(v_default)->second;
+	}
 	t_transfer f_create_context();
 	t_transfer f_create_buffer()
 	{
@@ -156,7 +157,7 @@ public:
 	}
 	void f_samples(t_bytes& a_buffer, ALCsizei a_samples)
 	{
-		if (a_buffer.f_size() < a_samples) t_throwable::f_throw(L"not enough buffer.");
+		if (static_cast<ALCsizei>(a_buffer.f_size()) < a_samples) t_throwable::f_throw(L"not enough buffer.");
 		alcCaptureSamples(v_entry->first, &a_buffer[0], a_samples);
 		f_check_error();
 	}

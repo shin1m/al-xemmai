@@ -4,8 +4,6 @@
 #include <map>
 #include <xemmai/convert.h>
 #include <xemmai/bytes.h>
-#include <AL/al.h>
-#include <AL/alc.h>
 #include <AL/alut.h>
 
 namespace al
