@@ -48,14 +48,14 @@ class t_device : public t_base_device
 	t_device(std::map<ALCdevice*, t_scoped>::iterator a_entry, ALCcontext* a_default);
 	~t_device()
 	{
-		v_entry->second.f_pointer__(0);
+		v_entry->second.f_pointer__(nullptr);
 		t_session* session = t_session::f_instance();
 		session->v_devices.erase(v_entry);
 	}
-	t_transfer f_create_buffer(ALuint a_id);
+	t_scoped f_create_buffer(ALuint a_id);
 
 public:
-	static t_transfer f_construct(t_object* a_class, const std::wstring* a_name)
+	static t_scoped f_construct(t_object* a_class, const std::wstring* a_name)
 	{
 		t_session* session = t_session::f_instance();
 		ALCdevice* device = alcOpenDevice(a_name ? f_convert(*a_name).c_str() : NULL);
@@ -65,18 +65,18 @@ public:
 			alcCloseDevice(device);
 			t_throwable::f_throw(L"alcCreateContext failed.");
 		}
-		t_transfer object = t_object::f_allocate(a_class);
+		t_scoped object = t_object::f_allocate(a_class);
 		object.f_pointer__(new t_device(session->v_devices.insert(std::make_pair(device, static_cast<t_object*>(object))).first, context));
 		return object;
 	}
 
 	void f_close();
-	t_transfer f_default_context() const
+	t_scoped f_default_context() const
 	{
 		return v_contexts.find(v_default)->second;
 	}
-	t_transfer f_create_context();
-	t_transfer f_create_buffer()
+	t_scoped f_create_context();
+	t_scoped f_create_buffer()
 	{
 		alcMakeContextCurrent(v_default);
 		ALuint id;
@@ -84,28 +84,28 @@ public:
 		t_error::f_check();
 		return f_create_buffer(id);
 	}
-	t_transfer f_create_buffer_from_file(const std::wstring& a_path)
+	t_scoped f_create_buffer_from_file(const std::wstring& a_path)
 	{
 		alcMakeContextCurrent(v_default);
 		ALuint id = alutCreateBufferFromFile(f_convert(a_path).c_str());
 		if (id == AL_NONE) t_alut_error::f_throw();
 		return f_create_buffer(id);
 	}
-	t_transfer f_create_buffer_from_file_image(const t_bytes& a_data)
+	t_scoped f_create_buffer_from_file_image(const t_bytes& a_data)
 	{
 		alcMakeContextCurrent(v_default);
 		ALuint id = alutCreateBufferFromFileImage(&a_data[0], a_data.f_size());
 		if (id == AL_NONE) t_alut_error::f_throw();
 		return f_create_buffer(id);
 	}
-	t_transfer f_create_buffer_hello_world()
+	t_scoped f_create_buffer_hello_world()
 	{
 		alcMakeContextCurrent(v_default);
 		ALuint id = alutCreateBufferHelloWorld();
 		if (id == AL_NONE) t_alut_error::f_throw();
 		return f_create_buffer(id);
 	}
-	t_transfer f_create_buffer_waveform(ALenum a_shape, ALfloat a_frequency, ALfloat a_phase, ALfloat a_duration)
+	t_scoped f_create_buffer_waveform(ALenum a_shape, ALfloat a_frequency, ALfloat a_phase, ALfloat a_duration)
 	{
 		alcMakeContextCurrent(v_default);
 		ALuint id = alutCreateBufferWaveform(a_shape, a_frequency, a_phase, a_duration);
@@ -128,18 +128,18 @@ class t_capture_device : public t_base_device
 	}
 	~t_capture_device()
 	{
-		v_entry->second.f_pointer__(0);
+		v_entry->second.f_pointer__(nullptr);
 		t_session* session = t_session::f_instance();
 		session->v_capture_devices.erase(v_entry);
 	}
 
 public:
-	static t_transfer f_construct(t_object* a_class, const std::wstring* a_name, ALCuint a_frequency, ALCenum a_format, ALCsizei a_buffer)
+	static t_scoped f_construct(t_object* a_class, const std::wstring* a_name, ALCuint a_frequency, ALCenum a_format, ALCsizei a_buffer)
 	{
 		t_session* session = t_session::f_instance();
 		ALCdevice* device = alcCaptureOpenDevice(a_name ? f_convert(*a_name).c_str() : NULL, a_frequency, a_format, a_buffer);
 		if (device == NULL) t_throwable::f_throw(L"alcCaptureOpenDevice failed.");
-		t_transfer object = t_object::f_allocate(a_class);
+		t_scoped object = t_object::f_allocate(a_class);
 		object.f_pointer__(new t_capture_device(session->v_capture_devices.insert(std::make_pair(device, static_cast<t_object*>(object))).first));
 		return object;
 	}
@@ -182,12 +182,10 @@ struct t_type_of<t_base_device> : t_type
 
 	static void f_define(t_extension* a_extension);
 
-	t_type_of(const t_transfer& a_module, const t_transfer& a_super) : t_type(a_module, a_super)
-	{
-	}
+	using t_type::t_type;
 	virtual t_type* f_derive(t_object* a_this);
 	virtual void f_finalize(t_object* a_this);
-	virtual t_transfer f_construct(t_object* a_class, t_slot* a_stack, size_t a_n);
+	virtual t_scoped f_construct(t_object* a_class, t_slot* a_stack, size_t a_n);
 	virtual void f_instantiate(t_object* a_class, t_slot* a_stack, size_t a_n);
 };
 
@@ -196,10 +194,8 @@ struct t_type_of<t_device> : t_type_of<t_base_device>
 {
 	static void f_define(t_extension* a_extension);
 
-	t_type_of(const t_transfer& a_module, const t_transfer& a_super) : t_type_of<t_base_device>(a_module, a_super)
-	{
-	}
-	virtual t_transfer f_construct(t_object* a_class, t_slot* a_stack, size_t a_n);
+	using t_type_of<t_base_device>::t_type_of;
+	virtual t_scoped f_construct(t_object* a_class, t_slot* a_stack, size_t a_n);
 };
 
 template<>
@@ -207,10 +203,8 @@ struct t_type_of<t_capture_device> : t_type_of<t_base_device>
 {
 	static void f_define(t_extension* a_extension);
 
-	t_type_of(const t_transfer& a_module, const t_transfer& a_super) : t_type_of<t_base_device>(a_module, a_super)
-	{
-	}
-	virtual t_transfer f_construct(t_object* a_class, t_slot* a_stack, size_t a_n);
+	using t_type_of<t_base_device>::t_type_of;
+	virtual t_scoped f_construct(t_object* a_class, t_slot* a_stack, size_t a_n);
 };
 
 }

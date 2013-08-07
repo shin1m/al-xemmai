@@ -15,15 +15,15 @@ void t_type_of<t_buffer>::f_define(t_extension* a_extension)
 		(L"seti", t_member<void (t_buffer::*)(ALenum, ALint), &t_buffer::f_seti>())
 		(L"set3i", t_member<void (t_buffer::*)(ALenum, ALint, ALint, ALint), &t_buffer::f_set3i>())
 		(L"getf", t_member<ALfloat (t_buffer::*)(ALenum) const, &t_buffer::f_getf>())
-		(L"get3f", t_member<t_transfer (t_buffer::*)(ALenum) const, &t_buffer::f_get3f>())
+		(L"get3f", t_member<t_scoped (t_buffer::*)(ALenum) const, &t_buffer::f_get3f>())
 		(L"geti", t_member<ALint (t_buffer::*)(ALenum) const, &t_buffer::f_geti>())
-		(L"get3i", t_member<t_transfer (t_buffer::*)(ALenum) const, &t_buffer::f_get3i>())
+		(L"get3i", t_member<t_scoped (t_buffer::*)(ALenum) const, &t_buffer::f_get3i>())
 	;
 }
 
 t_type* t_type_of<t_buffer>::f_derive(t_object* a_this)
 {
-	return 0;
+	return nullptr;
 }
 
 void t_type_of<t_buffer>::f_finalize(t_object* a_this)

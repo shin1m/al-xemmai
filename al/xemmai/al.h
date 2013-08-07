@@ -15,9 +15,8 @@ namespace xemmai
 using ::xemmai::t_object;
 using ::xemmai::t_scan;
 using ::xemmai::t_value;
-using ::xemmai::t_transfer;
-using ::xemmai::t_scoped;
 using ::xemmai::t_slot;
+using ::xemmai::t_scoped;
 using ::xemmai::t_fundamental;
 using ::xemmai::t_type_of;
 using ::xemmai::f_check;
@@ -26,7 +25,6 @@ using ::xemmai::t_define;
 using ::xemmai::f_global;
 using ::xemmai::t_throwable;
 using ::xemmai::t_bytes;
-using ::xemmai::portable::t_mutex;
 using ::xemmai::portable::f_convert;
 
 class t_extension;
@@ -43,8 +41,8 @@ class t_buffer;
 template<typename T_error>
 void f_throw(const ALchar* a_message, ALenum a_error);
 
-t_transfer f_tuple(const t_transfer& a_0, const t_transfer& a_1, const t_transfer& a_2);
-t_transfer f_tuple(const t_transfer& a_0, const t_transfer& a_1, const t_transfer& a_2, const t_transfer& a_3, const t_transfer& a_4, const t_transfer& a_5);
+t_scoped f_tuple(t_scoped&& a_0, t_scoped&& a_1, t_scoped&& a_2);
+t_scoped f_tuple(t_scoped&& a_0, t_scoped&& a_1, t_scoped&& a_2, t_scoped&& a_3, t_scoped&& a_4, t_scoped&& a_5);
 
 class t_session
 {
@@ -54,7 +52,7 @@ class t_session
 	friend class t_capture_device;
 	friend class t_context;
 
-	static t_mutex v_mutex;
+	static std::mutex v_mutex;
 	static bool v_running;
 	static XEMMAI__PORTABLE__THREAD t_session* v_instance;
 
@@ -92,7 +90,7 @@ class t_extension : public ::xemmai::t_extension
 	t_slot v_type_buffer;
 
 	template<typename T>
-	void f_type__(const t_transfer& a_type);
+	void f_type__(t_scoped&& a_type);
 
 public:
 	t_extension(t_object* a_module);
@@ -108,7 +106,7 @@ public:
 		return f_global()->f_type<T>();
 	}
 	template<typename T>
-	t_transfer f_as(const T& a_value) const
+	t_scoped f_as(const T& a_value) const
 	{
 		typedef t_type_of<typename t_fundamental<T>::t_type> t;
 		return t::f_transfer(f_extension<typename t::t_extension>(), a_value);
@@ -116,57 +114,57 @@ public:
 };
 
 template<>
-inline void t_extension::f_type__<t_error>(const t_transfer& a_type)
+inline void t_extension::f_type__<t_error>(t_scoped&& a_type)
 {
-	v_type_error = a_type;
+	v_type_error = std::move(a_type);
 }
 
 template<>
-inline void t_extension::f_type__<t_alc_error>(const t_transfer& a_type)
+inline void t_extension::f_type__<t_alc_error>(t_scoped&& a_type)
 {
-	v_type_alc_error = a_type;
+	v_type_alc_error = std::move(a_type);
 }
 
 template<>
-inline void t_extension::f_type__<t_alut_error>(const t_transfer& a_type)
+inline void t_extension::f_type__<t_alut_error>(t_scoped&& a_type)
 {
-	v_type_alut_error = a_type;
+	v_type_alut_error = std::move(a_type);
 }
 
 template<>
-inline void t_extension::f_type__<t_base_device>(const t_transfer& a_type)
+inline void t_extension::f_type__<t_base_device>(t_scoped&& a_type)
 {
-	v_type_base_device = a_type;
+	v_type_base_device = std::move(a_type);
 }
 
 template<>
-inline void t_extension::f_type__<t_device>(const t_transfer& a_type)
+inline void t_extension::f_type__<t_device>(t_scoped&& a_type)
 {
-	v_type_device = a_type;
+	v_type_device = std::move(a_type);
 }
 
 template<>
-inline void t_extension::f_type__<t_capture_device>(const t_transfer& a_type)
+inline void t_extension::f_type__<t_capture_device>(t_scoped&& a_type)
 {
-	v_type_capture_device = a_type;
+	v_type_capture_device = std::move(a_type);
 }
 
 template<>
-inline void t_extension::f_type__<t_context>(const t_transfer& a_type)
+inline void t_extension::f_type__<t_context>(t_scoped&& a_type)
 {
-	v_type_context = a_type;
+	v_type_context = std::move(a_type);
 }
 
 template<>
-inline void t_extension::f_type__<t_source>(const t_transfer& a_type)
+inline void t_extension::f_type__<t_source>(t_scoped&& a_type)
 {
-	v_type_source = a_type;
+	v_type_source = std::move(a_type);
 }
 
 template<>
-inline void t_extension::f_type__<t_buffer>(const t_transfer& a_type)
+inline void t_extension::f_type__<t_buffer>(t_scoped&& a_type)
 {
-	v_type_buffer = a_type;
+	v_type_buffer = std::move(a_type);
 }
 
 template<>

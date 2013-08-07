@@ -22,7 +22,7 @@ class t_buffer
 	}
 	~t_buffer()
 	{
-		v_entry->second.f_pointer__(0);
+		v_entry->second.f_pointer__(nullptr);
 		v_device->v_buffers.erase(v_entry);
 	}
 
@@ -66,14 +66,14 @@ public:
 		t_error::f_check();
 		return value;
 	}
-	t_transfer f_get3f(ALenum a_parameter) const
+	t_scoped f_get3f(ALenum a_parameter) const
 	{
 		ALfloat value1;
 		ALfloat value2;
 		ALfloat value3;
 		alGetBuffer3f(v_entry->first, a_parameter, &value1, &value2, &value3);
 		t_error::f_check();
-		return f_tuple(t_transfer(value1), t_transfer(value2), t_transfer(value3));
+		return f_tuple(t_scoped(value1), t_scoped(value2), t_scoped(value3));
 	}
 	ALint f_geti(ALenum a_parameter) const
 	{
@@ -82,14 +82,14 @@ public:
 		t_error::f_check();
 		return value;
 	}
-	t_transfer f_get3i(ALenum a_parameter) const
+	t_scoped f_get3i(ALenum a_parameter) const
 	{
 		ALint value1;
 		ALint value2;
 		ALint value3;
 		alGetBuffer3i(v_entry->first, a_parameter, &value1, &value2, &value3);
 		t_error::f_check();
-		return f_tuple(t_transfer(value1), t_transfer(value2), t_transfer(value3));
+		return f_tuple(t_scoped(value1), t_scoped(value2), t_scoped(value3));
 	}
 };
 
@@ -110,9 +110,7 @@ struct t_type_of<t_buffer> : t_type
 
 	static void f_define(t_extension* a_extension);
 
-	t_type_of(const t_transfer& a_module, const t_transfer& a_super) : t_type(a_module, a_super)
-	{
-	}
+	using t_type::t_type;
 	virtual t_type* f_derive(t_object* a_this);
 	virtual void f_finalize(t_object* a_this);
 	virtual void f_instantiate(t_object* a_class, t_slot* a_stack, size_t a_n);

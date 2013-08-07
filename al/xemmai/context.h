@@ -46,7 +46,7 @@ public:
 		alcSuspendContext(v_entry->first);
 		v_device->f_check_error();
 	}
-	t_transfer f_get_device() const
+	t_scoped f_get_device() const
 	{
 		return v_device->v_entry->second;
 	}
@@ -76,37 +76,37 @@ public:
 		t_error::f_check();
 		return f_convert(std::string(p));
 	}
-	t_transfer f_get_booleanv(ALenum a_parameter) const
+	t_scoped f_get_booleanv(ALenum a_parameter) const
 	{
 		f_make_current();
 		ALboolean data[3];
 		alGetBooleanv(a_parameter, data);
 		t_error::f_check();
-		return f_tuple(t_transfer(data[0] != AL_FALSE), t_transfer(data[1] != AL_FALSE), t_transfer(data[2] != AL_FALSE));
+		return f_tuple(t_scoped(data[0] != AL_FALSE), t_scoped(data[1] != AL_FALSE), t_scoped(data[2] != AL_FALSE));
 	}
-	t_transfer f_get_integerv(ALenum a_parameter) const
+	t_scoped f_get_integerv(ALenum a_parameter) const
 	{
 		f_make_current();
 		ALint data[3];
 		alGetIntegerv(a_parameter, data);
 		t_error::f_check();
-		return f_tuple(t_transfer(data[0]), t_transfer(data[1]), t_transfer(data[2]));
+		return f_tuple(t_scoped(data[0]), t_scoped(data[1]), t_scoped(data[2]));
 	}
-	t_transfer f_get_floatv(ALenum a_parameter) const
+	t_scoped f_get_floatv(ALenum a_parameter) const
 	{
 		f_make_current();
 		ALfloat data[3];
 		alGetFloatv(a_parameter, data);
 		t_error::f_check();
-		return f_tuple(t_transfer(data[0]), t_transfer(data[1]), t_transfer(data[2]));
+		return f_tuple(t_scoped(data[0]), t_scoped(data[1]), t_scoped(data[2]));
 	}
-	t_transfer f_get_doublev(ALenum a_parameter) const
+	t_scoped f_get_doublev(ALenum a_parameter) const
 	{
 		f_make_current();
 		ALdouble data[3];
 		alGetDoublev(a_parameter, data);
 		t_error::f_check();
-		return f_tuple(t_transfer(data[0]), t_transfer(data[1]), t_transfer(data[2]));
+		return f_tuple(t_scoped(data[0]), t_scoped(data[1]), t_scoped(data[2]));
 	}
 	bool f_get_boolean(ALenum a_parameter) const
 	{
@@ -188,7 +188,7 @@ public:
 		t_error::f_check();
 		return value;
 	}
-	t_transfer f_get_listener3f(ALenum a_parameter) const
+	t_scoped f_get_listener3f(ALenum a_parameter) const
 	{
 		f_make_current();
 		ALfloat value1;
@@ -196,15 +196,15 @@ public:
 		ALfloat value3;
 		alGetListener3f(a_parameter, &value1, &value2, &value3);
 		t_error::f_check();
-		return f_tuple(t_transfer(value1), t_transfer(value2), t_transfer(value3));
+		return f_tuple(t_scoped(value1), t_scoped(value2), t_scoped(value3));
 	}
-	t_transfer f_get_listenerfv(ALenum a_parameter) const
+	t_scoped f_get_listenerfv(ALenum a_parameter) const
 	{
 		f_make_current();
 		ALfloat values[6];
 		alGetListenerfv(a_parameter, values);
 		t_error::f_check();
-		return f_tuple(t_transfer(values[0]), t_transfer(values[1]), t_transfer(values[2]), t_transfer(values[3]), t_transfer(values[4]), t_transfer(values[5]));
+		return f_tuple(t_scoped(values[0]), t_scoped(values[1]), t_scoped(values[2]), t_scoped(values[3]), t_scoped(values[4]), t_scoped(values[5]));
 	}
 	ALint f_get_listeneri(ALenum a_parameter) const
 	{
@@ -214,7 +214,7 @@ public:
 		t_error::f_check();
 		return value;
 	}
-	t_transfer f_get_listener3i(ALenum a_parameter) const
+	t_scoped f_get_listener3i(ALenum a_parameter) const
 	{
 		f_make_current();
 		ALint value1;
@@ -222,17 +222,17 @@ public:
 		ALint value3;
 		alGetListener3i(a_parameter, &value1, &value2, &value3);
 		t_error::f_check();
-		return f_tuple(t_transfer(value1), t_transfer(value2), t_transfer(value3));
+		return f_tuple(t_scoped(value1), t_scoped(value2), t_scoped(value3));
 	}
-	t_transfer f_get_listeneriv(ALenum a_parameter) const
+	t_scoped f_get_listeneriv(ALenum a_parameter) const
 	{
 		f_make_current();
 		ALint values[6];
 		alGetListeneriv(a_parameter, values);
 		t_error::f_check();
-		return f_tuple(t_transfer(values[0]), t_transfer(values[1]), t_transfer(values[2]), t_transfer(values[3]), t_transfer(values[4]), t_transfer(values[5]));
+		return f_tuple(t_scoped(values[0]), t_scoped(values[1]), t_scoped(values[2]), t_scoped(values[3]), t_scoped(values[4]), t_scoped(values[5]));
 	}
-	t_transfer f_create_source();
+	t_scoped f_create_source();
 	template<void (*A_function)(ALsizei, const ALuint*)>
 	static void f_source_do(t_object* a_module, const t_value& a_self, t_slot* a_stack, size_t a_n);
 	void f_doppler_factor(ALfloat a_value)
@@ -278,9 +278,7 @@ struct t_type_of<t_context> : t_type
 
 	static void f_define(t_extension* a_extension);
 
-	t_type_of(const t_transfer& a_module, const t_transfer& a_super) : t_type(a_module, a_super)
-	{
-	}
+	using t_type::t_type;
 	virtual t_type* f_derive(t_object* a_this);
 	virtual void f_finalize(t_object* a_this);
 	virtual void f_instantiate(t_object* a_class, t_slot* a_stack, size_t a_n);

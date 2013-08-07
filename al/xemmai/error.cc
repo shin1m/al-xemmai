@@ -36,7 +36,7 @@ void t_type_of<t_error>::f_define(t_extension* a_extension)
 
 t_type* t_type_of<t_error>::f_derive(t_object* a_this)
 {
-	return 0;
+	return nullptr;
 }
 
 void t_type_of<t_error>::f_instantiate(t_object* a_class, t_slot* a_stack, size_t a_n)

@@ -12,38 +12,37 @@ namespace xemmai
 using ::xemmai::t_tuple;
 using ::xemmai::t_symbol;
 using ::xemmai::f_define;
-using ::xemmai::portable::t_scoped_lock;
 
-t_transfer f_tuple(const t_transfer& a_0, const t_transfer& a_1, const t_transfer& a_2)
+t_scoped f_tuple(t_scoped&& a_0, t_scoped&& a_1, t_scoped&& a_2)
 {
-	t_transfer p = t_tuple::f_instantiate(3);
+	t_scoped p = t_tuple::f_instantiate(3);
 	t_tuple& tuple = f_as<t_tuple&>(p);
-	tuple[0].f_construct(a_0);
-	tuple[1].f_construct(a_1);
-	tuple[2].f_construct(a_2);
+	tuple[0].f_construct(std::move(a_0));
+	tuple[1].f_construct(std::move(a_1));
+	tuple[2].f_construct(std::move(a_2));
 	return p;
 }
 
-t_transfer f_tuple(const t_transfer& a_0, const t_transfer& a_1, const t_transfer& a_2, const t_transfer& a_3, const t_transfer& a_4, const t_transfer& a_5)
+t_scoped f_tuple(t_scoped&& a_0, t_scoped&& a_1, t_scoped&& a_2, t_scoped&& a_3, t_scoped&& a_4, t_scoped&& a_5)
 {
-	t_transfer p = t_tuple::f_instantiate(6);
+	t_scoped p = t_tuple::f_instantiate(6);
 	t_tuple& tuple = f_as<t_tuple&>(p);
-	tuple[0].f_construct(a_0);
-	tuple[1].f_construct(a_1);
-	tuple[2].f_construct(a_2);
-	tuple[3].f_construct(a_3);
-	tuple[4].f_construct(a_4);
-	tuple[5].f_construct(a_5);
+	tuple[0].f_construct(std::move(a_0));
+	tuple[1].f_construct(std::move(a_1));
+	tuple[2].f_construct(std::move(a_2));
+	tuple[3].f_construct(std::move(a_3));
+	tuple[4].f_construct(std::move(a_4));
+	tuple[5].f_construct(std::move(a_5));
 	return p;
 }
 
-t_mutex t_session::v_mutex;
+std::mutex t_session::v_mutex;
 bool t_session::v_running = false;
 XEMMAI__PORTABLE__THREAD t_session* t_session::v_instance;
 
 t_session::t_session(t_extension* a_extension) : v_extension(a_extension)
 {
-	t_scoped_lock lock(v_mutex);
+	std::unique_lock<std::mutex> lock(v_mutex);
 	if (v_running) t_throwable::f_throw(L"main already running.");
 	if (alutInitWithoutContext(NULL, NULL) != AL_TRUE) t_throwable::f_throw(L"alutInitWithoutContext failed.");
 	v_running = true;
@@ -54,9 +53,9 @@ t_session::~t_session()
 {
 	while (!v_devices.empty()) f_as<t_device&>(v_devices.begin()->second).f_close();
 	while (!v_capture_devices.empty()) f_as<t_capture_device&>(v_capture_devices.begin()->second).f_close();
-	t_scoped_lock lock(v_mutex);
+	std::unique_lock<std::mutex> lock(v_mutex);
 	v_running = false;
-	v_instance = 0;
+	v_instance = nullptr;
 	if (alutExit() != AL_TRUE) t_throwable::f_throw(L"alutExit failed.");
 }
 
@@ -69,19 +68,19 @@ void f_main(t_extension* a_extension, const t_value& a_callable)
 	a_callable();
 }
 
-t_transfer f_alc_get_string(ALCenum a_parameter)
+t_scoped f_alc_get_string(ALCenum a_parameter)
 {
 	const ALCchar* p = alcGetString(NULL, a_parameter);
-	return p == NULL ? t_transfer() : f_global()->f_as(f_convert(std::string(p)));
+	return p == NULL ? t_scoped() : f_global()->f_as(f_convert(std::string(p)));
 }
 
-t_transfer f_alc_get_strings(ALCenum a_parameter)
+t_scoped f_alc_get_strings(ALCenum a_parameter)
 {
 	const ALCchar* p = alcGetString(NULL, a_parameter);
-	if (p == NULL) return t_transfer();
+	if (p == NULL) return t_scoped();
 	size_t n = 0;
 	for (const ALCchar* q = p; *q != '\0'; q += std::strlen(q) + 1) ++n;
-	t_transfer q = t_tuple::f_instantiate(n);
+	t_scoped q = t_tuple::f_instantiate(n);
 	t_tuple& tuple = f_as<t_tuple&>(q);
 	for (size_t i = 0; i < n; ++i) {
 		tuple[i].f_construct(f_global()->f_as(f_convert(std::string(p))));
@@ -102,8 +101,8 @@ t_extension::t_extension(t_object* a_module) : ::xemmai::t_extension(a_module)
 	t_type_of<t_source>::f_define(this);
 	t_type_of<t_buffer>::f_define(this);
 	f_define<void (*)(t_extension*, const t_value&), f_main>(this, L"main");
-	f_define<t_transfer (*)(ALCenum), f_alc_get_string>(this, L"alc_get_string");
-	f_define<t_transfer (*)(ALCenum), f_alc_get_strings>(this, L"alc_get_strings");
+	f_define<t_scoped (*)(ALCenum), f_alc_get_string>(this, L"alc_get_string");
+	f_define<t_scoped (*)(ALCenum), f_alc_get_strings>(this, L"alc_get_strings");
 	a_module->f_put(t_symbol::f_instantiate(L"SOURCE_RELATIVE"), f_as(AL_SOURCE_RELATIVE));
 	a_module->f_put(t_symbol::f_instantiate(L"CONE_INNER_ANGLE"), f_as(AL_CONE_INNER_ANGLE));
 	a_module->f_put(t_symbol::f_instantiate(L"CONE_OUTER_ANGLE"), f_as(AL_CONE_OUTER_ANGLE));

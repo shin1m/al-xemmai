@@ -22,7 +22,7 @@ class t_source
 	}
 	~t_source()
 	{
-		v_entry->second.f_pointer__(0);
+		v_entry->second.f_pointer__(nullptr);
 		v_context->v_sources.erase(v_entry);
 	}
 
@@ -72,7 +72,7 @@ public:
 		t_error::f_check();
 		return value;
 	}
-	t_transfer f_get3f(ALenum a_parameter) const
+	t_scoped f_get3f(ALenum a_parameter) const
 	{
 		v_context->f_make_current();
 		ALfloat value1;
@@ -80,7 +80,7 @@ public:
 		ALfloat value3;
 		alGetSource3f(v_entry->first, a_parameter, &value1, &value2, &value3);
 		t_error::f_check();
-		return f_tuple(t_transfer(value1), t_transfer(value2), t_transfer(value3));
+		return f_tuple(t_scoped(value1), t_scoped(value2), t_scoped(value3));
 	}
 	ALint f_geti(ALenum a_parameter) const
 	{
@@ -90,7 +90,7 @@ public:
 		t_error::f_check();
 		return value;
 	}
-	t_transfer f_get3i(ALenum a_parameter) const
+	t_scoped f_get3i(ALenum a_parameter) const
 	{
 		v_context->f_make_current();
 		ALint value1;
@@ -98,7 +98,7 @@ public:
 		ALint value3;
 		alGetSource3i(v_entry->first, a_parameter, &value1, &value2, &value3);
 		t_error::f_check();
-		return f_tuple(t_transfer(value1), t_transfer(value2), t_transfer(value3));
+		return f_tuple(t_scoped(value1), t_scoped(value2), t_scoped(value3));
 	}
 	bool f_getb(ALenum a_parameter) const
 	{
@@ -138,7 +138,7 @@ public:
 		alSourcei(v_entry->first, AL_BUFFER, a_buffer ? a_buffer->v_entry->first : AL_NONE);
 		t_error::f_check();
 	}
-	t_transfer f_get_buffer() const
+	t_scoped f_get_buffer() const
 	{
 		v_context->f_make_current();
 		ALint id;
@@ -152,7 +152,7 @@ public:
 		alSourceQueueBuffers(v_entry->first, 1, &a_buffer.v_entry->first);
 		t_error::f_check();
 	}
-	t_transfer f_unqueue_buffer()
+	t_scoped f_unqueue_buffer()
 	{
 		v_context->f_make_current();
 		ALuint id;
@@ -179,9 +179,7 @@ struct t_type_of<t_source> : t_type
 
 	static void f_define(t_extension* a_extension);
 
-	t_type_of(const t_transfer& a_module, const t_transfer& a_super) : t_type(a_module, a_super)
-	{
-	}
+	using t_type::t_type;
 	virtual t_type* f_derive(t_object* a_this);
 	virtual void f_finalize(t_object* a_this);
 	virtual void f_instantiate(t_object* a_class, t_slot* a_stack, size_t a_n);
@@ -196,7 +194,8 @@ void al::xemmai::t_context::f_source_do(t_object* a_module, const t_value& a_sel
 	context.f_make_current();
 	std::vector<ALuint> ids(a_n);
 	for (size_t i = 0; i < a_n; ++i) {
-		t_source& source = f_as<t_source&>(a_stack[i + 1].f_transfer());
+		t_scoped p = std::move(a_stack[i + 1]);
+		t_source& source = f_as<t_source&>(p);
 		ids[i] = source.v_entry->first;
 	}
 	A_function(a_n, &ids[0]);
