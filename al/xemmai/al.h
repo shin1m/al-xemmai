@@ -54,7 +54,7 @@ class t_session
 
 	static std::mutex v_mutex;
 	static bool v_running;
-	static XEMMAI__PORTABLE__THREAD t_session* v_instance;
+	static thread_local t_session* v_instance;
 
 	t_extension* v_extension;
 	std::map<ALCdevice*, t_scoped> v_devices;

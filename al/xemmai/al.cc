@@ -38,7 +38,7 @@ t_scoped f_tuple(t_scoped&& a_0, t_scoped&& a_1, t_scoped&& a_2, t_scoped&& a_3,
 
 std::mutex t_session::v_mutex;
 bool t_session::v_running = false;
-XEMMAI__PORTABLE__THREAD t_session* t_session::v_instance;
+thread_local t_session* t_session::v_instance;
 
 t_session::t_session(t_extension* a_extension) : v_extension(a_extension)
 {
