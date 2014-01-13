@@ -234,7 +234,7 @@ public:
 	}
 	t_scoped f_create_source();
 	template<void (*A_function)(ALsizei, const ALuint*)>
-	static void f_source_do(t_object* a_module, const t_value& a_self, t_slot* a_stack, size_t a_n);
+	static void f_source_do(t_object* a_module, t_slot* a_stack, size_t a_n);
 	void f_doppler_factor(ALfloat a_value)
 	{
 		f_make_current();
