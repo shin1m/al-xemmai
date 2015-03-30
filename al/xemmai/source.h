@@ -182,13 +182,13 @@ struct t_type_of<t_source> : t_type
 	using t_type::t_type;
 	virtual t_type* f_derive(t_object* a_this);
 	virtual void f_finalize(t_object* a_this);
-	virtual void f_instantiate(t_object* a_class, t_slot* a_stack, size_t a_n);
+	virtual void f_instantiate(t_object* a_class, t_scoped* a_stack, size_t a_n);
 };
 
 }
 
 template<void (*A_function)(ALsizei, const ALuint*)>
-void al::xemmai::t_context::f_source_do(t_object* a_module, t_slot* a_stack, size_t a_n)
+void al::xemmai::t_context::f_source_do(t_object* a_module, t_scoped* a_stack, size_t a_n)
 {
 	t_scoped self = std::move(a_stack[0]);
 	t_context& context = f_as<t_context&>(self);

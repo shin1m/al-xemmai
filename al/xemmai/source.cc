@@ -41,7 +41,7 @@ void t_type_of<t_source>::f_finalize(t_object* a_this)
 	assert(!p);
 }
 
-void t_type_of<t_source>::f_instantiate(t_object* a_class, t_slot* a_stack, size_t a_n)
+void t_type_of<t_source>::f_instantiate(t_object* a_class, t_scoped* a_stack, size_t a_n)
 {
 	t_throwable::f_throw(L"uninstantiatable.");
 }

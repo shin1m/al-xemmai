@@ -185,8 +185,8 @@ struct t_type_of<t_base_device> : t_type
 	using t_type::t_type;
 	virtual t_type* f_derive(t_object* a_this);
 	virtual void f_finalize(t_object* a_this);
-	virtual t_scoped f_construct(t_object* a_class, t_slot* a_stack, size_t a_n);
-	virtual void f_instantiate(t_object* a_class, t_slot* a_stack, size_t a_n);
+	virtual t_scoped f_construct(t_object* a_class, t_scoped* a_stack, size_t a_n);
+	virtual void f_instantiate(t_object* a_class, t_scoped* a_stack, size_t a_n);
 };
 
 template<>
@@ -195,7 +195,7 @@ struct t_type_of<t_device> : t_type_of<t_base_device>
 	static void f_define(t_extension* a_extension);
 
 	using t_type_of<t_base_device>::t_type_of;
-	virtual t_scoped f_construct(t_object* a_class, t_slot* a_stack, size_t a_n);
+	virtual t_scoped f_construct(t_object* a_class, t_scoped* a_stack, size_t a_n);
 };
 
 template<>
@@ -204,7 +204,7 @@ struct t_type_of<t_capture_device> : t_type_of<t_base_device>
 	static void f_define(t_extension* a_extension);
 
 	using t_type_of<t_base_device>::t_type_of;
-	virtual t_scoped f_construct(t_object* a_class, t_slot* a_stack, size_t a_n);
+	virtual t_scoped f_construct(t_object* a_class, t_scoped* a_stack, size_t a_n);
 };
 
 }

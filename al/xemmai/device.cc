@@ -90,13 +90,13 @@ void t_type_of<t_base_device>::f_finalize(t_object* a_this)
 	assert(!p);
 }
 
-t_scoped t_type_of<t_base_device>::f_construct(t_object* a_class, t_slot* a_stack, size_t a_n)
+t_scoped t_type_of<t_base_device>::f_construct(t_object* a_class, t_scoped* a_stack, size_t a_n)
 {
 	t_throwable::f_throw(L"uninstantiatable.");
 	return t_scoped();
 }
 
-void t_type_of<t_base_device>::f_instantiate(t_object* a_class, t_slot* a_stack, size_t a_n)
+void t_type_of<t_base_device>::f_instantiate(t_object* a_class, t_scoped* a_stack, size_t a_n)
 {
 	a_stack[0].f_construct(f_construct(a_class, a_stack, a_n));
 	for (size_t i = 1; i <= a_n; ++i) a_stack[i] = nullptr;
@@ -117,7 +117,7 @@ void t_type_of<t_device>::f_define(t_extension* a_extension)
 	;
 }
 
-t_scoped t_type_of<t_device>::f_construct(t_object* a_class, t_slot* a_stack, size_t a_n)
+t_scoped t_type_of<t_device>::f_construct(t_object* a_class, t_scoped* a_stack, size_t a_n)
 {
 	return t_construct_with<t_scoped (*)(t_object*, const std::wstring*), t_device::f_construct>::t_bind<t_device>::f_do(a_class, a_stack, a_n);
 }
@@ -132,7 +132,7 @@ void t_type_of<t_capture_device>::f_define(t_extension* a_extension)
 	;
 }
 
-t_scoped t_type_of<t_capture_device>::f_construct(t_object* a_class, t_slot* a_stack, size_t a_n)
+t_scoped t_type_of<t_capture_device>::f_construct(t_object* a_class, t_scoped* a_stack, size_t a_n)
 {
 	return t_construct_with<t_scoped (*)(t_object*, const std::wstring*, ALCuint, ALCenum, ALCsizei), t_capture_device::f_construct>::t_bind<t_capture_device>::f_do(a_class, a_stack, a_n);
 }
