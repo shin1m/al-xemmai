@@ -190,12 +190,12 @@ struct t_type_of<t_source> : t_type
 template<void (*A_function)(ALsizei, const ALuint*)>
 void al::xemmai::t_context::f_source_do(t_object* a_module, t_scoped* a_stack, size_t a_n)
 {
-	t_scoped self = std::move(a_stack[0]);
+	t_scoped self = std::move(a_stack[1]);
 	t_context& context = f_as<t_context&>(self);
 	context.f_make_current();
 	std::vector<ALuint> ids(a_n);
 	for (size_t i = 0; i < a_n; ++i) {
-		t_scoped p = std::move(a_stack[i + 1]);
+		t_scoped p = std::move(a_stack[i + 2]);
 		t_source& source = f_as<t_source&>(p);
 		ids[i] = source.v_entry->first;
 	}
