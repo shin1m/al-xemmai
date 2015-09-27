@@ -268,13 +268,12 @@ public:
 namespace xemmai
 {
 
-using al::xemmai::t_context;
-
 template<>
-struct t_type_of<t_context> : t_type
+struct t_type_of<al::xemmai::t_context> : t_type
 {
 #include "cast.h"
 	typedef al::xemmai::t_extension t_extension;
+	typedef al::xemmai::t_context t_context;
 
 	static void f_define(t_extension* a_extension);
 
