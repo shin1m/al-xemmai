@@ -182,23 +182,18 @@ struct t_type_of<t_source> : t_type
 	using t_type::t_type;
 	virtual t_type* f_derive(t_object* a_this);
 	virtual void f_finalize(t_object* a_this);
-	virtual void f_instantiate(t_object* a_class, t_scoped* a_stack, size_t a_n);
+	virtual void f_instantiate(t_object* a_class, t_stacked* a_stack, size_t a_n);
 };
 
 }
 
 template<void (*A_function)(ALsizei, const ALuint*)>
-void al::xemmai::t_context::f_source_do(t_object* a_module, t_scoped* a_stack, size_t a_n)
+void al::xemmai::t_context::f_source_do(t_object* a_module, t_stacked* a_stack, size_t a_n)
 {
-	t_scoped self = std::move(a_stack[1]);
-	t_context& context = f_as<t_context&>(self);
-	context.f_make_current();
+	t_destruct_n destruct(a_stack, a_n);
+	f_as<t_context&>(a_stack[1]).f_make_current();
 	std::vector<ALuint> ids(a_n);
-	for (size_t i = 0; i < a_n; ++i) {
-		t_scoped p = std::move(a_stack[i + 2]);
-		t_source& source = f_as<t_source&>(p);
-		ids[i] = source.v_entry->first;
-	}
+	for (size_t i = 0; i < a_n; ++i) ids[i] = f_as<t_source&>(a_stack[i + 2]).v_entry->first;
 	A_function(a_n, &ids[0]);
 	t_error::f_check();
 }

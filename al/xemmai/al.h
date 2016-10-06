@@ -17,6 +17,8 @@ using ::xemmai::t_scan;
 using ::xemmai::t_value;
 using ::xemmai::t_slot;
 using ::xemmai::t_scoped;
+using ::xemmai::t_stacked;
+using ::xemmai::t_destruct_n;
 using ::xemmai::t_fundamental;
 using ::xemmai::t_type_of;
 using ::xemmai::f_check;
