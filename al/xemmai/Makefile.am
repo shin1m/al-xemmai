@@ -2,7 +2,7 @@ xemmaidir = $(XEMMAI_MODULE_PATH)
 
 xemmai_LTLIBRARIES = al.la
 AM_CPPFLAGS = $(OPENAL_CFLAGS) $(ALUT_CFLAGS) $(XEMMAI_CFLAGS)
-AM_CXXFLAGS = -std=c++11
+AM_CXXFLAGS =
 AM_LDFLAGS = -module -avoid-version
 if DEBUG
 AM_CXXFLAGS += -g
