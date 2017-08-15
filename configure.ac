@@ -1,10 +1,10 @@
-AC_INIT([al-xemmai], [201706])
+AC_INIT([al-xemmai], [201708])
 AM_INIT_AUTOMAKE([foreign nostdinc dist-bzip2 no-dist-gzip])
-AC_CONFIG_SRCDIR([al/xemmai/al.cc])
+AC_CONFIG_SRCDIR([src/al.cc])
 
 PKG_CHECK_MODULES([OPENAL], [openal >= 1.1])
 PKG_CHECK_MODULES([ALUT], [freealut >= 1.1])
-XEMMAI_USE=xemmai-201706
+XEMMAI_USE=xemmai-201708
 PKG_CHECK_MODULES([XEMMAI], [${XEMMAI_USE}], [
 	XEMMAI_MODULE_PATH=`pkg-config --variable=module_path ${XEMMAI_USE}`
 ])
@@ -44,9 +44,9 @@ AC_ARG_ENABLE(
 )
 AM_CONDITIONAL([PROFILE], [test x$profile = xtrue])
 
-AC_CONFIG_HEADERS([al/xemmai/configure.h])
+AC_CONFIG_HEADERS([src/configure.h])
 AC_CONFIG_FILES([
 	Makefile
-	al/xemmai/Makefile
+	src/Makefile
 ])
 AC_OUTPUT

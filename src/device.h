@@ -1,12 +1,12 @@
-#ifndef AL__XEMMAI__DEVICE_H
-#define AL__XEMMAI__DEVICE_H
+#ifndef XEMMAIX__AL__DEVICE_H
+#define XEMMAIX__AL__DEVICE_H
 
 #include "error.h"
 
-namespace al
+namespace xemmaix
 {
 
-namespace xemmai
+namespace al
 {
 
 class t_base_device
@@ -170,15 +170,11 @@ public:
 namespace xemmai
 {
 
-using al::xemmai::t_base_device;
-using al::xemmai::t_device;
-using al::xemmai::t_capture_device;
-
 template<>
-struct t_type_of<t_base_device> : t_type
+struct t_type_of<xemmaix::al::t_base_device> : t_type
 {
 #include "cast.h"
-	typedef al::xemmai::t_extension t_extension;
+	typedef xemmaix::al::t_extension t_extension;
 
 	static void f_define(t_extension* a_extension);
 
@@ -190,20 +186,20 @@ struct t_type_of<t_base_device> : t_type
 };
 
 template<>
-struct t_type_of<t_device> : t_type_of<t_base_device>
+struct t_type_of<xemmaix::al::t_device> : t_type_of<xemmaix::al::t_base_device>
 {
 	static void f_define(t_extension* a_extension);
 
-	using t_type_of<t_base_device>::t_type_of;
+	using t_type_of<xemmaix::al::t_base_device>::t_type_of;
 	virtual t_scoped f_construct(t_object* a_class, t_stacked* a_stack, size_t a_n);
 };
 
 template<>
-struct t_type_of<t_capture_device> : t_type_of<t_base_device>
+struct t_type_of<xemmaix::al::t_capture_device> : t_type_of<xemmaix::al::t_base_device>
 {
 	static void f_define(t_extension* a_extension);
 
-	using t_type_of<t_base_device>::t_type_of;
+	using t_type_of<xemmaix::al::t_base_device>::t_type_of;
 	virtual t_scoped f_construct(t_object* a_class, t_stacked* a_stack, size_t a_n);
 };
 

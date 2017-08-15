@@ -1,12 +1,12 @@
-#ifndef AL__XEMMAI__BUFFER_H
-#define AL__XEMMAI__BUFFER_H
+#ifndef XEMMAIX__AL__BUFFER_H
+#define XEMMAIX__AL__BUFFER_H
 
 #include "device.h"
 
-namespace al
+namespace xemmaix
 {
 
-namespace xemmai
+namespace al
 {
 
 class t_buffer
@@ -100,13 +100,11 @@ public:
 namespace xemmai
 {
 
-using al::xemmai::t_buffer;
-
 template<>
-struct t_type_of<t_buffer> : t_type
+struct t_type_of<xemmaix::al::t_buffer> : t_type
 {
 #include "cast.h"
-	typedef al::xemmai::t_extension t_extension;
+	typedef xemmaix::al::t_extension t_extension;
 
 	static void f_define(t_extension* a_extension);
 

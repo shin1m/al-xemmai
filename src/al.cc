@@ -3,15 +3,13 @@
 #include <cstring>
 #include <xemmai/tuple.h>
 
+namespace xemmaix
+{
+
 namespace al
 {
 
-namespace xemmai
-{
-
-using ::xemmai::t_tuple;
-using ::xemmai::t_symbol;
-using ::xemmai::f_define;
+using namespace xemmai;
 
 t_scoped f_tuple(t_scoped&& a_0, t_scoped&& a_1, t_scoped&& a_2)
 {
@@ -91,7 +89,7 @@ t_scoped f_alc_get_strings(ALCenum a_parameter)
 
 }
 
-t_extension::t_extension(t_object* a_module) : ::xemmai::t_extension(a_module)
+t_extension::t_extension(t_object* a_module) : xemmai::t_extension(a_module)
 {
 	t_type_of<t_error>::f_define(this);
 	t_type_of<t_base_device>::f_define(this);
@@ -233,5 +231,5 @@ void t_extension::f_scan(t_scan a_scan)
 
 XEMMAI__MODULE__FACTORY(xemmai::t_object* a_module)
 {
-	return new al::xemmai::t_extension(a_module);
+	return new xemmaix::al::t_extension(a_module);
 }

@@ -1,12 +1,12 @@
-#ifndef AL__XEMMAI__CONTEXT_H
-#define AL__XEMMAI__CONTEXT_H
+#ifndef XEMMAIX__AL__CONTEXT_H
+#define XEMMAIX__AL__CONTEXT_H
 
 #include "device.h"
 
-namespace al
+namespace xemmaix
 {
 
-namespace xemmai
+namespace al
 {
 
 class t_context
@@ -269,11 +269,11 @@ namespace xemmai
 {
 
 template<>
-struct t_type_of<al::xemmai::t_context> : t_type
+struct t_type_of<xemmaix::al::t_context> : t_type
 {
 #include "cast.h"
-	typedef al::xemmai::t_extension t_extension;
-	typedef al::xemmai::t_context t_context;
+	typedef xemmaix::al::t_extension t_extension;
+	typedef xemmaix::al::t_context t_context;
 
 	static void f_define(t_extension* a_extension);
 

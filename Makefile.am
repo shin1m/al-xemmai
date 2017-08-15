@@ -1,1 +1,1 @@
-SUBDIRS = al/xemmai
+SUBDIRS = src

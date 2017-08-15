@@ -1,13 +1,13 @@
-#ifndef AL__XEMMAI__SOURCE_H
-#define AL__XEMMAI__SOURCE_H
+#ifndef XEMMAIX__AL__SOURCE_H
+#define XEMMAIX__AL__SOURCE_H
 
 #include "context.h"
 #include "buffer.h"
 
-namespace al
+namespace xemmaix
 {
 
-namespace xemmai
+namespace al
 {
 
 class t_source
@@ -169,13 +169,11 @@ public:
 namespace xemmai
 {
 
-using al::xemmai::t_source;
-
 template<>
-struct t_type_of<t_source> : t_type
+struct t_type_of<xemmaix::al::t_source> : t_type
 {
 #include "cast.h"
-	typedef al::xemmai::t_extension t_extension;
+	typedef xemmaix::al::t_extension t_extension;
 
 	static void f_define(t_extension* a_extension);
 
@@ -188,7 +186,7 @@ struct t_type_of<t_source> : t_type
 }
 
 template<void (*A_function)(ALsizei, const ALuint*)>
-void al::xemmai::t_context::f_source_do(t_object* a_module, t_stacked* a_stack, size_t a_n)
+void xemmaix::al::t_context::f_source_do(t_object* a_module, t_stacked* a_stack, size_t a_n)
 {
 	t_destruct_n destruct(a_stack, a_n);
 	f_as<t_context&>(a_stack[1]).f_make_current();

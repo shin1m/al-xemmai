@@ -1,33 +1,19 @@
-#ifndef AL__XEMMAI__AL_H
-#define AL__XEMMAI__AL_H
+#ifndef XEMMAIX__AL__AL_H
+#define XEMMAIX__AL__AL_H
 
 #include <map>
 #include <xemmai/convert.h>
 #include <xemmai/bytes.h>
 #include <AL/alut.h>
 
+namespace xemmaix
+{
+
 namespace al
 {
 
-namespace xemmai
-{
-
-using ::xemmai::t_object;
-using ::xemmai::t_scan;
-using ::xemmai::t_value;
-using ::xemmai::t_slot;
-using ::xemmai::t_scoped;
-using ::xemmai::t_stacked;
-using ::xemmai::t_destruct_n;
-using ::xemmai::t_fundamental;
-using ::xemmai::t_type_of;
-using ::xemmai::f_check;
-using ::xemmai::f_as;
-using ::xemmai::t_define;
-using ::xemmai::f_global;
-using ::xemmai::t_throwable;
-using ::xemmai::t_bytes;
-using ::xemmai::portable::f_convert;
+using namespace xemmai;
+using namespace xemmai::portable;
 
 class t_extension;
 class t_error;
@@ -77,9 +63,9 @@ public:
 	}
 };
 
-class t_extension : public ::xemmai::t_extension
+class t_extension : public xemmai::t_extension
 {
-	template<typename T, typename T_super> friend class t_define;
+	template<typename T, typename T_super> friend class xemmai::t_define;
 
 	t_slot v_type_error;
 	t_slot v_type_alc_error;

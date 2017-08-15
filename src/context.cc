@@ -2,10 +2,10 @@
 
 #include <cassert>
 
-namespace al
+namespace xemmaix
 {
 
-namespace xemmai
+namespace al
 {
 
 t_context::~t_context()
@@ -34,7 +34,7 @@ t_scoped t_context::f_create_source()
 namespace xemmai
 {
 
-void t_type_of<al::xemmai::t_context>::f_define(t_extension* a_extension)
+void t_type_of<xemmaix::al::t_context>::f_define(t_extension* a_extension)
 {
 	t_define<t_context, t_object>(a_extension, L"Context")
 		(L"destroy", t_member<void (t_context::*)(), &t_context::f_destroy>())
@@ -77,18 +77,18 @@ void t_type_of<al::xemmai::t_context>::f_define(t_extension* a_extension)
 	;
 }
 
-t_type* t_type_of<al::xemmai::t_context>::f_derive(t_object* a_this)
+t_type* t_type_of<xemmaix::al::t_context>::f_derive(t_object* a_this)
 {
 	return nullptr;
 }
 
-void t_type_of<al::xemmai::t_context>::f_finalize(t_object* a_this)
+void t_type_of<xemmaix::al::t_context>::f_finalize(t_object* a_this)
 {
-	al::xemmai::t_context* p = static_cast<al::xemmai::t_context*>(a_this->f_pointer());
+	auto p = static_cast<xemmaix::al::t_context*>(a_this->f_pointer());
 	assert(!p);
 }
 
-void t_type_of<al::xemmai::t_context>::f_instantiate(t_object* a_class, t_stacked* a_stack, size_t a_n)
+void t_type_of<xemmaix::al::t_context>::f_instantiate(t_object* a_class, t_stacked* a_stack, size_t a_n)
 {
 	t_throwable::f_throw(a_stack, a_n, L"uninstantiatable.");
 }
