@@ -6,10 +6,7 @@
 #include <xemmai/bytes.h>
 #include <AL/alut.h>
 
-namespace xemmaix
-{
-
-namespace al
+namespace xemmaix::al
 {
 
 using namespace xemmai;
@@ -213,8 +210,6 @@ template<>
 inline t_object* t_extension::f_type<t_buffer>() const
 {
 	return v_type_buffer;
-}
-
 }
 
 }

@@ -3,10 +3,7 @@
 
 #include "device.h"
 
-namespace xemmaix
-{
-
-namespace al
+namespace xemmaix::al
 {
 
 class t_context
@@ -260,8 +257,6 @@ public:
 		t_error::f_check();
 	}
 };
-
-}
 
 }
 

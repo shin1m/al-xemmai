@@ -3,10 +3,7 @@
 
 #include "device.h"
 
-namespace xemmaix
-{
-
-namespace al
+namespace xemmaix::al
 {
 
 class t_buffer
@@ -92,8 +89,6 @@ public:
 		return f_tuple(t_scoped(value1), t_scoped(value2), t_scoped(value3));
 	}
 };
-
-}
 
 }
 

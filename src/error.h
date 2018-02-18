@@ -3,10 +3,7 @@
 
 #include "al.h"
 
-namespace xemmaix
-{
-
-namespace al
+namespace xemmaix::al
 {
 
 class t_error : public t_throwable
@@ -49,8 +46,6 @@ inline void f_throw(const ALchar* a_message, ALenum a_error)
 	t_scoped object = t_object::f_allocate(session->v_extension->f_type<T_error>());
 	object.f_pointer__(new T_error(message, a_error));
 	throw object;
-}
-
 }
 
 }

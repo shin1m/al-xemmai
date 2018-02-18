@@ -2,10 +2,7 @@
 
 #include <cassert>
 
-namespace xemmaix
-{
-
-namespace al
+namespace xemmaix::al
 {
 
 t_context::~t_context()
@@ -25,8 +22,6 @@ t_scoped t_context::f_create_source()
 	t_scoped object = t_object::f_allocate(session->v_extension->f_type<t_source>());
 	object.f_pointer__(new t_source(this, v_sources.insert(std::make_pair(id, static_cast<t_object*>(object))).first));
 	return object;
-}
-
 }
 
 }

@@ -4,10 +4,7 @@
 #include "context.h"
 #include "buffer.h"
 
-namespace xemmaix
-{
-
-namespace al
+namespace xemmaix::al
 {
 
 class t_source
@@ -161,8 +158,6 @@ public:
 		return v_context->v_device->v_buffers.find(id)->second;
 	}
 };
-
-}
 
 }
 

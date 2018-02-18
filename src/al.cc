@@ -3,10 +3,7 @@
 #include <cstring>
 #include <xemmai/tuple.h>
 
-namespace xemmaix
-{
-
-namespace al
+namespace xemmaix::al
 {
 
 using namespace xemmai;
@@ -223,8 +220,6 @@ void t_extension::f_scan(t_scan a_scan)
 	a_scan(v_type_context);
 	a_scan(v_type_source);
 	a_scan(v_type_buffer);
-}
-
 }
 
 }

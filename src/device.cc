@@ -4,10 +4,7 @@
 
 #include <cassert>
 
-namespace xemmaix
-{
-
-namespace al
+namespace xemmaix::al
 {
 
 void t_base_device::f_check_error() const
@@ -62,8 +59,6 @@ void t_capture_device::f_close()
 {
 	if (alcCaptureCloseDevice(v_entry->first) != ALC_TRUE) t_throwable::f_throw(L"alcCaptureCloseDevice failed.");
 	delete this;
-}
-
 }
 
 }

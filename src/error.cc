@@ -1,9 +1,6 @@
 #include "error.h"
 
-namespace xemmaix
-{
-
-namespace al
+namespace xemmaix::al
 {
 
 void t_error::f_check()
@@ -16,8 +13,6 @@ void t_alut_error::f_throw()
 {
 	ALenum error = alutGetError();
 	xemmaix::al::f_throw<t_alut_error>(alutGetErrorString(error), error);
-}
-
 }
 
 }

@@ -3,10 +3,7 @@
 
 #include "error.h"
 
-namespace xemmaix
-{
-
-namespace al
+namespace xemmaix::al
 {
 
 class t_base_device
@@ -162,8 +159,6 @@ public:
 		f_check_error();
 	}
 };
-
-}
 
 }
 
