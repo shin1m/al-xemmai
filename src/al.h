@@ -4,6 +4,7 @@
 #include <map>
 #include <xemmai/convert.h>
 #include <xemmai/bytes.h>
+#include <xemmai/tuple.h>
 #include <AL/alut.h>
 
 namespace xemmaix::al
@@ -25,9 +26,6 @@ class t_buffer;
 
 template<typename T_error>
 void f_throw(const ALchar* a_message, ALenum a_error);
-
-t_scoped f_tuple(t_scoped&& a_0, t_scoped&& a_1, t_scoped&& a_2);
-t_scoped f_tuple(t_scoped&& a_0, t_scoped&& a_1, t_scoped&& a_2, t_scoped&& a_3, t_scoped&& a_4, t_scoped&& a_5);
 
 class t_session
 {

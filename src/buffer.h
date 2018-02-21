@@ -70,7 +70,7 @@ public:
 		ALfloat value3;
 		alGetBuffer3f(v_entry->first, a_parameter, &value1, &value2, &value3);
 		t_error::f_check();
-		return f_tuple(t_scoped(value1), t_scoped(value2), t_scoped(value3));
+		return f_tuple(value1, value2, value3);
 	}
 	ALint f_geti(ALenum a_parameter) const
 	{
@@ -86,7 +86,7 @@ public:
 		ALint value3;
 		alGetBuffer3i(v_entry->first, a_parameter, &value1, &value2, &value3);
 		t_error::f_check();
-		return f_tuple(t_scoped(value1), t_scoped(value2), t_scoped(value3));
+		return f_tuple(value1, value2, value3);
 	}
 };
 

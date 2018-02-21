@@ -1,35 +1,11 @@
 #include "source.h"
 
 #include <cstring>
-#include <xemmai/tuple.h>
 
 namespace xemmaix::al
 {
 
 using namespace xemmai;
-
-t_scoped f_tuple(t_scoped&& a_0, t_scoped&& a_1, t_scoped&& a_2)
-{
-	t_scoped p = t_tuple::f_instantiate(3);
-	t_tuple& tuple = f_as<t_tuple&>(p);
-	tuple[0].f_construct(std::move(a_0));
-	tuple[1].f_construct(std::move(a_1));
-	tuple[2].f_construct(std::move(a_2));
-	return p;
-}
-
-t_scoped f_tuple(t_scoped&& a_0, t_scoped&& a_1, t_scoped&& a_2, t_scoped&& a_3, t_scoped&& a_4, t_scoped&& a_5)
-{
-	t_scoped p = t_tuple::f_instantiate(6);
-	t_tuple& tuple = f_as<t_tuple&>(p);
-	tuple[0].f_construct(std::move(a_0));
-	tuple[1].f_construct(std::move(a_1));
-	tuple[2].f_construct(std::move(a_2));
-	tuple[3].f_construct(std::move(a_3));
-	tuple[4].f_construct(std::move(a_4));
-	tuple[5].f_construct(std::move(a_5));
-	return p;
-}
 
 std::mutex t_session::v_mutex;
 bool t_session::v_running = false;

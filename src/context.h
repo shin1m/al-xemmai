@@ -79,7 +79,7 @@ public:
 		ALboolean data[3];
 		alGetBooleanv(a_parameter, data);
 		t_error::f_check();
-		return f_tuple(t_scoped(data[0] != AL_FALSE), t_scoped(data[1] != AL_FALSE), t_scoped(data[2] != AL_FALSE));
+		return f_tuple(data[0] != AL_FALSE, data[1] != AL_FALSE, data[2] != AL_FALSE);
 	}
 	t_scoped f_get_integerv(ALenum a_parameter) const
 	{
@@ -87,7 +87,7 @@ public:
 		ALint data[3];
 		alGetIntegerv(a_parameter, data);
 		t_error::f_check();
-		return f_tuple(t_scoped(data[0]), t_scoped(data[1]), t_scoped(data[2]));
+		return f_tuple(data[0], data[1], data[2]);
 	}
 	t_scoped f_get_floatv(ALenum a_parameter) const
 	{
@@ -95,7 +95,7 @@ public:
 		ALfloat data[3];
 		alGetFloatv(a_parameter, data);
 		t_error::f_check();
-		return f_tuple(t_scoped(data[0]), t_scoped(data[1]), t_scoped(data[2]));
+		return f_tuple(data[0], data[1], data[2]);
 	}
 	t_scoped f_get_doublev(ALenum a_parameter) const
 	{
@@ -103,7 +103,7 @@ public:
 		ALdouble data[3];
 		alGetDoublev(a_parameter, data);
 		t_error::f_check();
-		return f_tuple(t_scoped(data[0]), t_scoped(data[1]), t_scoped(data[2]));
+		return f_tuple(data[0], data[1], data[2]);
 	}
 	bool f_get_boolean(ALenum a_parameter) const
 	{
@@ -193,7 +193,7 @@ public:
 		ALfloat value3;
 		alGetListener3f(a_parameter, &value1, &value2, &value3);
 		t_error::f_check();
-		return f_tuple(t_scoped(value1), t_scoped(value2), t_scoped(value3));
+		return f_tuple(value1, value2, value3);
 	}
 	t_scoped f_get_listenerfv(ALenum a_parameter) const
 	{
@@ -201,7 +201,7 @@ public:
 		ALfloat values[6];
 		alGetListenerfv(a_parameter, values);
 		t_error::f_check();
-		return f_tuple(t_scoped(values[0]), t_scoped(values[1]), t_scoped(values[2]), t_scoped(values[3]), t_scoped(values[4]), t_scoped(values[5]));
+		return f_tuple(values[0], values[1], values[2], values[3], values[4], values[5]);
 	}
 	ALint f_get_listeneri(ALenum a_parameter) const
 	{
@@ -219,7 +219,7 @@ public:
 		ALint value3;
 		alGetListener3i(a_parameter, &value1, &value2, &value3);
 		t_error::f_check();
-		return f_tuple(t_scoped(value1), t_scoped(value2), t_scoped(value3));
+		return f_tuple(value1, value2, value3);
 	}
 	t_scoped f_get_listeneriv(ALenum a_parameter) const
 	{
@@ -227,7 +227,7 @@ public:
 		ALint values[6];
 		alGetListeneriv(a_parameter, values);
 		t_error::f_check();
-		return f_tuple(t_scoped(values[0]), t_scoped(values[1]), t_scoped(values[2]), t_scoped(values[3]), t_scoped(values[4]), t_scoped(values[5]));
+		return f_tuple(values[0], values[1], values[2], values[3], values[4], values[5]);
 	}
 	t_scoped f_create_source();
 	template<void (*A_function)(ALsizei, const ALuint*)>
