@@ -52,7 +52,7 @@ class t_device : public t_base_device
 	t_scoped f_create_buffer(ALuint a_id);
 
 public:
-	static t_scoped f_construct(t_object* a_class, const std::wstring* a_name)
+	static t_scoped f_construct(t_type* a_class, const std::wstring* a_name)
 	{
 		t_session* session = t_session::f_instance();
 		ALCdevice* device = alcOpenDevice(a_name ? f_convert(*a_name).c_str() : NULL);
@@ -131,7 +131,7 @@ class t_capture_device : public t_base_device
 	}
 
 public:
-	static t_scoped f_construct(t_object* a_class, const std::wstring* a_name, ALCuint a_frequency, ALCenum a_format, ALCsizei a_buffer)
+	static t_scoped f_construct(t_type* a_class, const std::wstring* a_name, ALCuint a_frequency, ALCenum a_format, ALCsizei a_buffer)
 	{
 		t_session* session = t_session::f_instance();
 		ALCdevice* device = alcCaptureOpenDevice(a_name ? f_convert(*a_name).c_str() : NULL, a_frequency, a_format, a_buffer);
@@ -174,10 +174,10 @@ struct t_type_of<xemmaix::al::t_base_device> : t_type
 	static void f_define(t_extension* a_extension);
 
 	using t_type::t_type;
-	virtual t_type* f_derive(t_object* a_this);
+	virtual t_type* f_derive();
 	virtual void f_finalize(t_object* a_this);
-	virtual t_scoped f_construct(t_object* a_class, t_stacked* a_stack, size_t a_n);
-	virtual void f_instantiate(t_object* a_class, t_stacked* a_stack, size_t a_n);
+	virtual t_scoped f_construct(t_stacked* a_stack, size_t a_n);
+	virtual void f_instantiate(t_stacked* a_stack, size_t a_n);
 };
 
 template<>
@@ -186,7 +186,7 @@ struct t_type_of<xemmaix::al::t_device> : t_type_of<xemmaix::al::t_base_device>
 	static void f_define(t_extension* a_extension);
 
 	using t_type_of<xemmaix::al::t_base_device>::t_type_of;
-	virtual t_scoped f_construct(t_object* a_class, t_stacked* a_stack, size_t a_n);
+	virtual t_scoped f_construct(t_stacked* a_stack, size_t a_n);
 };
 
 template<>
@@ -195,7 +195,7 @@ struct t_type_of<xemmaix::al::t_capture_device> : t_type_of<xemmaix::al::t_base_
 	static void f_define(t_extension* a_extension);
 
 	using t_type_of<xemmaix::al::t_base_device>::t_type_of;
-	virtual t_scoped f_construct(t_object* a_class, t_stacked* a_stack, size_t a_n);
+	virtual t_scoped f_construct(t_stacked* a_stack, size_t a_n);
 };
 
 }

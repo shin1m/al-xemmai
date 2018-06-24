@@ -231,7 +231,7 @@ public:
 	}
 	t_scoped f_create_source();
 	template<void (*A_function)(ALsizei, const ALuint*)>
-	static void f_source_do(t_object* a_module, t_stacked* a_stack, size_t a_n);
+	static void f_source_do(xemmai::t_extension* a_extension, t_stacked* a_stack, size_t a_n);
 	void f_doppler_factor(ALfloat a_value)
 	{
 		f_make_current();
@@ -273,9 +273,9 @@ struct t_type_of<xemmaix::al::t_context> : t_type
 	static void f_define(t_extension* a_extension);
 
 	using t_type::t_type;
-	virtual t_type* f_derive(t_object* a_this);
+	virtual t_type* f_derive();
 	virtual void f_finalize(t_object* a_this);
-	virtual void f_instantiate(t_object* a_class, t_stacked* a_stack, size_t a_n);
+	virtual void f_instantiate(t_stacked* a_stack, size_t a_n);
 };
 
 }

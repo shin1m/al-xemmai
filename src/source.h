@@ -173,15 +173,15 @@ struct t_type_of<xemmaix::al::t_source> : t_type
 	static void f_define(t_extension* a_extension);
 
 	using t_type::t_type;
-	virtual t_type* f_derive(t_object* a_this);
+	virtual t_type* f_derive();
 	virtual void f_finalize(t_object* a_this);
-	virtual void f_instantiate(t_object* a_class, t_stacked* a_stack, size_t a_n);
+	virtual void f_instantiate(t_stacked* a_stack, size_t a_n);
 };
 
 }
 
 template<void (*A_function)(ALsizei, const ALuint*)>
-void xemmaix::al::t_context::f_source_do(t_object* a_module, t_stacked* a_stack, size_t a_n)
+void xemmaix::al::t_context::f_source_do(xemmai::t_extension* a_extension, t_stacked* a_stack, size_t a_n)
 {
 	t_destruct_n destruct(a_stack, a_n);
 	f_as<t_context&>(a_stack[1]).f_make_current();

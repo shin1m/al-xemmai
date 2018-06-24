@@ -60,20 +60,15 @@ public:
 
 class t_extension : public xemmai::t_extension
 {
-	template<typename T, typename T_super> friend class xemmai::t_define;
-
-	t_slot v_type_error;
-	t_slot v_type_alc_error;
-	t_slot v_type_alut_error;
-	t_slot v_type_base_device;
-	t_slot v_type_device;
-	t_slot v_type_capture_device;
-	t_slot v_type_context;
-	t_slot v_type_source;
-	t_slot v_type_buffer;
-
-	template<typename T>
-	void f_type__(t_scoped&& a_type);
+	t_slot_of<t_type> v_type_error;
+	t_slot_of<t_type> v_type_alc_error;
+	t_slot_of<t_type> v_type_alut_error;
+	t_slot_of<t_type> v_type_base_device;
+	t_slot_of<t_type> v_type_device;
+	t_slot_of<t_type> v_type_capture_device;
+	t_slot_of<t_type> v_type_context;
+	t_slot_of<t_type> v_type_source;
+	t_slot_of<t_type> v_type_buffer;
 
 public:
 	t_extension(t_object* a_module);
@@ -84,9 +79,14 @@ public:
 		return f_global();
 	}
 	template<typename T>
-	t_object* f_type() const
+	t_slot_of<t_type>& f_type_slot()
 	{
-		return f_global()->f_type<T>();
+		return f_global()->f_type_slot<T>();
+	}
+	template<typename T>
+	t_type* f_type() const
+	{
+		return const_cast<t_extension*>(this)->f_type_slot<T>();
 	}
 	template<typename T>
 	t_scoped f_as(T&& a_value) const
@@ -97,115 +97,61 @@ public:
 };
 
 template<>
-inline void t_extension::f_type__<t_error>(t_scoped&& a_type)
-{
-	v_type_error = std::move(a_type);
-}
-
-template<>
-inline void t_extension::f_type__<t_alc_error>(t_scoped&& a_type)
-{
-	v_type_alc_error = std::move(a_type);
-}
-
-template<>
-inline void t_extension::f_type__<t_alut_error>(t_scoped&& a_type)
-{
-	v_type_alut_error = std::move(a_type);
-}
-
-template<>
-inline void t_extension::f_type__<t_base_device>(t_scoped&& a_type)
-{
-	v_type_base_device = std::move(a_type);
-}
-
-template<>
-inline void t_extension::f_type__<t_device>(t_scoped&& a_type)
-{
-	v_type_device = std::move(a_type);
-}
-
-template<>
-inline void t_extension::f_type__<t_capture_device>(t_scoped&& a_type)
-{
-	v_type_capture_device = std::move(a_type);
-}
-
-template<>
-inline void t_extension::f_type__<t_context>(t_scoped&& a_type)
-{
-	v_type_context = std::move(a_type);
-}
-
-template<>
-inline void t_extension::f_type__<t_source>(t_scoped&& a_type)
-{
-	v_type_source = std::move(a_type);
-}
-
-template<>
-inline void t_extension::f_type__<t_buffer>(t_scoped&& a_type)
-{
-	v_type_buffer = std::move(a_type);
-}
-
-template<>
 inline const t_extension* t_extension::f_extension<t_extension>() const
 {
 	return this;
 }
 
 template<>
-inline t_object* t_extension::f_type<t_error>() const
+inline t_slot_of<t_type>& t_extension::f_type_slot<t_error>()
 {
 	return v_type_error;
 }
 
 template<>
-inline t_object* t_extension::f_type<t_alc_error>() const
+inline t_slot_of<t_type>& t_extension::f_type_slot<t_alc_error>()
 {
 	return v_type_alc_error;
 }
 
 template<>
-inline t_object* t_extension::f_type<t_alut_error>() const
+inline t_slot_of<t_type>& t_extension::f_type_slot<t_alut_error>()
 {
 	return v_type_alut_error;
 }
 
 template<>
-inline t_object* t_extension::f_type<t_base_device>() const
+inline t_slot_of<t_type>& t_extension::f_type_slot<t_base_device>()
 {
 	return v_type_base_device;
 }
 
 template<>
-inline t_object* t_extension::f_type<t_device>() const
+inline t_slot_of<t_type>& t_extension::f_type_slot<t_device>()
 {
 	return v_type_device;
 }
 
 template<>
-inline t_object* t_extension::f_type<t_capture_device>() const
+inline t_slot_of<t_type>& t_extension::f_type_slot<t_capture_device>()
 {
 	return v_type_capture_device;
 }
 
 template<>
-inline t_object* t_extension::f_type<t_context>() const
+inline t_slot_of<t_type>& t_extension::f_type_slot<t_context>()
 {
 	return v_type_context;
 }
 
 template<>
-inline t_object* t_extension::f_type<t_source>() const
+inline t_slot_of<t_type>& t_extension::f_type_slot<t_source>()
 {
 	return v_type_source;
 }
 
 template<>
-inline t_object* t_extension::f_type<t_buffer>() const
+inline t_slot_of<t_type>& t_extension::f_type_slot<t_buffer>()
 {
 	return v_type_buffer;
 }
