@@ -54,27 +54,25 @@ namespace xemmai
 {
 
 template<>
-struct t_type_of<xemmaix::al::t_error> : t_type_of<t_throwable>
+struct t_type_of<xemmaix::al::t_error> : t_uninstantiatable<t_underivable<t_bears<xemmaix::al::t_error, t_type_of<t_throwable>>>>
 {
 	typedef xemmaix::al::t_extension t_extension;
 
 	static void f_define(t_extension* a_extension);
 
-	using t_type_of<t_throwable>::t_type_of;
-	virtual t_type* f_derive();
-	virtual void f_instantiate(t_stacked* a_stack, size_t a_n);
+	using t_base::t_base;
 };
 
 template<>
-struct t_type_of<xemmaix::al::t_alc_error> : t_type_of<xemmaix::al::t_error>
+struct t_type_of<xemmaix::al::t_alc_error> : t_bears<xemmaix::al::t_alc_error, t_type_of<xemmaix::al::t_error>>
 {
-	using t_type_of<xemmaix::al::t_error>::t_type_of;
+	using t_base::t_base;
 };
 
 template<>
-struct t_type_of<xemmaix::al::t_alut_error> : t_type_of<xemmaix::al::t_error>
+struct t_type_of<xemmaix::al::t_alut_error> : t_bears<xemmaix::al::t_alut_error, t_type_of<xemmaix::al::t_error>>
 {
-	using t_type_of<xemmaix::al::t_error>::t_type_of;
+	using t_base::t_base;
 };
 
 }

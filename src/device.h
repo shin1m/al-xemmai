@@ -166,35 +166,30 @@ namespace xemmai
 {
 
 template<>
-struct t_type_of<xemmaix::al::t_base_device> : t_type
+struct t_type_of<xemmaix::al::t_base_device> : xemmaix::al::t_holds<xemmaix::al::t_base_device>
 {
-#include "cast.h"
-	typedef xemmaix::al::t_extension t_extension;
-
 	static void f_define(t_extension* a_extension);
 
-	using t_type::t_type;
-	virtual t_type* f_derive();
-	virtual void f_finalize(t_object* a_this);
+	using t_base::t_base;
 	virtual t_scoped f_construct(t_stacked* a_stack, size_t a_n);
 	virtual void f_instantiate(t_stacked* a_stack, size_t a_n);
 };
 
 template<>
-struct t_type_of<xemmaix::al::t_device> : t_type_of<xemmaix::al::t_base_device>
+struct t_type_of<xemmaix::al::t_device> : t_bears<xemmaix::al::t_device, t_type_of<xemmaix::al::t_base_device>>
 {
 	static void f_define(t_extension* a_extension);
 
-	using t_type_of<xemmaix::al::t_base_device>::t_type_of;
+	using t_base::t_base;
 	virtual t_scoped f_construct(t_stacked* a_stack, size_t a_n);
 };
 
 template<>
-struct t_type_of<xemmaix::al::t_capture_device> : t_type_of<xemmaix::al::t_base_device>
+struct t_type_of<xemmaix::al::t_capture_device> : t_bears<xemmaix::al::t_capture_device, t_type_of<xemmaix::al::t_base_device>>
 {
 	static void f_define(t_extension* a_extension);
 
-	using t_type_of<xemmaix::al::t_base_device>::t_type_of;
+	using t_base::t_base;
 	virtual t_scoped f_construct(t_stacked* a_stack, size_t a_n);
 };
 

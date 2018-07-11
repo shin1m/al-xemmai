@@ -1,7 +1,5 @@
 #include "source.h"
 
-#include <cassert>
-
 namespace xemmaix::al
 {
 
@@ -70,22 +68,6 @@ void t_type_of<xemmaix::al::t_context>::f_define(t_extension* a_extension)
 		(L"speed_of_sound", t_member<void (t_context::*)(ALfloat), &t_context::f_speed_of_sound>())
 		(L"distance_model", t_member<void (t_context::*)(ALenum), &t_context::f_distance_model>())
 	;
-}
-
-t_type* t_type_of<xemmaix::al::t_context>::f_derive()
-{
-	return nullptr;
-}
-
-void t_type_of<xemmaix::al::t_context>::f_finalize(t_object* a_this)
-{
-	auto p = static_cast<xemmaix::al::t_context*>(a_this->f_pointer());
-	assert(!p);
-}
-
-void t_type_of<xemmaix::al::t_context>::f_instantiate(t_stacked* a_stack, size_t a_n)
-{
-	t_throwable::f_throw(a_stack, a_n, L"uninstantiatable.");
 }
 
 }

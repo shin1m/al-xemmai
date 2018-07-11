@@ -30,14 +30,4 @@ void t_type_of<xemmaix::al::t_error>::f_define(t_extension* a_extension)
 	t_define<t_alut_error, t_error>(a_extension, L"ALUTError");
 }
 
-t_type* t_type_of<xemmaix::al::t_error>::f_derive()
-{
-	return nullptr;
-}
-
-void t_type_of<xemmaix::al::t_error>::f_instantiate(t_stacked* a_stack, size_t a_n)
-{
-	t_throwable::f_throw(a_stack, a_n, L"uninstantiatable.");
-}
-
 }

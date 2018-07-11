@@ -1,7 +1,5 @@
 #include "source.h"
 
-#include <cassert>
-
 namespace xemmai
 {
 
@@ -29,22 +27,6 @@ void t_type_of<xemmaix::al::t_source>::f_define(t_extension* a_extension)
 		(L"queue_buffer", t_member<void(t_source::*)(t_buffer&), &t_source::f_queue_buffer>())
 		(L"unqueue_buffer", t_member<t_scoped(t_source::*)(), &t_source::f_unqueue_buffer>())
 	;
-}
-
-t_type* t_type_of<xemmaix::al::t_source>::f_derive()
-{
-	return nullptr;
-}
-
-void t_type_of<xemmaix::al::t_source>::f_finalize(t_object* a_this)
-{
-	auto p = static_cast<xemmaix::al::t_source*>(a_this->f_pointer());
-	assert(!p);
-}
-
-void t_type_of<xemmaix::al::t_source>::f_instantiate(t_stacked* a_stack, size_t a_n)
-{
-	t_throwable::f_throw(a_stack, a_n, L"uninstantiatable.");
 }
 
 }

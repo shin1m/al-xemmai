@@ -2,8 +2,6 @@
 #include "source.h"
 #include "buffer.h"
 
-#include <cassert>
-
 namespace xemmaix::al
 {
 
@@ -73,17 +71,6 @@ void t_type_of<xemmaix::al::t_base_device>::f_define(t_extension* a_extension)
 		(L"get_string", t_member<std::wstring(t_base_device::*)(ALenum) const, &t_base_device::f_get_string>())
 		(L"get_integer", t_member<ALint(t_base_device::*)(ALenum) const, &t_base_device::f_get_integer>())
 	;
-}
-
-t_type* t_type_of<xemmaix::al::t_base_device>::f_derive()
-{
-	return nullptr;
-}
-
-void t_type_of<xemmaix::al::t_base_device>::f_finalize(t_object* a_this)
-{
-	auto p = static_cast<xemmaix::al::t_base_device*>(a_this->f_pointer());
-	assert(!p);
 }
 
 t_scoped t_type_of<xemmaix::al::t_base_device>::f_construct(t_stacked* a_stack, size_t a_n)

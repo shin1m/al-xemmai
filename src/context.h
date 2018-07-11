@@ -264,18 +264,13 @@ namespace xemmai
 {
 
 template<>
-struct t_type_of<xemmaix::al::t_context> : t_type
+struct t_type_of<xemmaix::al::t_context> : t_uninstantiatable<xemmaix::al::t_holds<xemmaix::al::t_context>>
 {
-#include "cast.h"
-	typedef xemmaix::al::t_extension t_extension;
 	typedef xemmaix::al::t_context t_context;
 
 	static void f_define(t_extension* a_extension);
 
-	using t_type::t_type;
-	virtual t_type* f_derive();
-	virtual void f_finalize(t_object* a_this);
-	virtual void f_instantiate(t_stacked* a_stack, size_t a_n);
+	using t_base::t_base;
 };
 
 }
