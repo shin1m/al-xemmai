@@ -39,7 +39,7 @@ void t_device::f_close()
 	f_check_error();
 	alcDestroyContext(v_default);
 	f_check_error();
-	if (alcCloseDevice(v_entry->first) != ALC_TRUE) t_throwable::f_throw(L"alcCloseDevice failed.");
+	if (alcCloseDevice(v_entry->first) != ALC_TRUE) xemmai::f_throw(L"alcCloseDevice failed.");
 	delete this;
 }
 
@@ -55,7 +55,7 @@ t_scoped t_device::f_create_context()
 
 void t_capture_device::f_close()
 {
-	if (alcCaptureCloseDevice(v_entry->first) != ALC_TRUE) t_throwable::f_throw(L"alcCaptureCloseDevice failed.");
+	if (alcCaptureCloseDevice(v_entry->first) != ALC_TRUE) xemmai::f_throw(L"alcCaptureCloseDevice failed.");
 	delete this;
 }
 
@@ -73,12 +73,12 @@ void t_type_of<xemmaix::al::t_base_device>::f_define(t_extension* a_extension)
 	;
 }
 
-t_scoped t_type_of<xemmaix::al::t_base_device>::f_construct(t_stacked* a_stack, size_t a_n)
+t_scoped t_type_of<xemmaix::al::t_base_device>::f_do_construct(t_stacked* a_stack, size_t a_n)
 {
-	t_throwable::f_throw(L"uninstantiatable.");
+	f_throw(L"uninstantiatable.");
 }
 
-void t_type_of<xemmaix::al::t_base_device>::f_instantiate(t_stacked* a_stack, size_t a_n)
+void t_type_of<xemmaix::al::t_base_device>::f_do_instantiate(t_stacked* a_stack, size_t a_n)
 {
 	t_destruct_n destruct(a_stack, a_n);
 	a_stack[0].f_construct(f_construct(a_stack, a_n));
@@ -100,7 +100,7 @@ void t_type_of<xemmaix::al::t_device>::f_define(t_extension* a_extension)
 	;
 }
 
-t_scoped t_type_of<xemmaix::al::t_device>::f_construct(t_stacked* a_stack, size_t a_n)
+t_scoped t_type_of<xemmaix::al::t_device>::f_do_construct(t_stacked* a_stack, size_t a_n)
 {
 	return t_construct_with<t_scoped(*)(t_type*, const std::wstring*), xemmaix::al::t_device::f_construct>::t_bind<xemmaix::al::t_device>::f_do(this, a_stack, a_n);
 }
@@ -116,7 +116,7 @@ void t_type_of<xemmaix::al::t_capture_device>::f_define(t_extension* a_extension
 	;
 }
 
-t_scoped t_type_of<xemmaix::al::t_capture_device>::f_construct(t_stacked* a_stack, size_t a_n)
+t_scoped t_type_of<xemmaix::al::t_capture_device>::f_do_construct(t_stacked* a_stack, size_t a_n)
 {
 	return t_construct_with<t_scoped(*)(t_type*, const std::wstring*, ALCuint, ALCenum, ALCsizei), xemmaix::al::t_capture_device::f_construct>::t_bind<xemmaix::al::t_capture_device>::f_do(this, a_stack, a_n);
 }

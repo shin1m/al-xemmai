@@ -14,8 +14,8 @@ XEMMAI__PORTABLE__THREAD t_session* t_session::v_instance;
 t_session::t_session(t_extension* a_extension) : v_extension(a_extension)
 {
 	std::unique_lock<std::mutex> lock(v_mutex);
-	if (v_running) t_throwable::f_throw(L"main already running.");
-	if (alutInitWithoutContext(NULL, NULL) != AL_TRUE) t_throwable::f_throw(L"alutInitWithoutContext failed.");
+	if (v_running) xemmai::f_throw(L"main already running.");
+	if (alutInitWithoutContext(NULL, NULL) != AL_TRUE) xemmai::f_throw(L"alutInitWithoutContext failed.");
 	v_running = true;
 	v_instance = this;
 }
@@ -27,7 +27,7 @@ t_session::~t_session()
 	std::unique_lock<std::mutex> lock(v_mutex);
 	v_running = false;
 	v_instance = nullptr;
-	if (alutExit() != AL_TRUE) t_throwable::f_throw(L"alutExit failed.");
+	if (alutExit() != AL_TRUE) xemmai::f_throw(L"alutExit failed.");
 }
 
 namespace

@@ -27,7 +27,7 @@ class t_context
 public:
 	void f_destroy()
 	{
-		if (v_entry->first == v_device->v_default) t_throwable::f_throw(L"default context can not be destroyed.");
+		if (v_entry->first == v_device->v_default) xemmai::f_throw(L"default context can not be destroyed.");
 		alcMakeContextCurrent(v_device->v_default);
 		alcDestroyContext(v_entry->first);
 		v_device->f_check_error();

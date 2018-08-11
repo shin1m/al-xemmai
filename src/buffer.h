@@ -32,7 +32,7 @@ public:
 	}
 	void f_data(ALenum a_format, const t_bytes& a_data, ALsizei a_size, ALsizei a_frequency)
 	{
-		if (a_size > static_cast<ALsizei>(a_data.f_size())) t_throwable::f_throw(L"out of range.");
+		if (a_size > static_cast<ALsizei>(a_data.f_size())) xemmai::f_throw(L"out of range.");
 		alBufferData(v_entry->first, a_format, &a_data[0], a_size, a_frequency);
 		t_error::f_check();
 	}

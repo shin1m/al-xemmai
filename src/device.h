@@ -56,11 +56,11 @@ public:
 	{
 		t_session* session = t_session::f_instance();
 		ALCdevice* device = alcOpenDevice(a_name ? f_convert(*a_name).c_str() : NULL);
-		if (device == NULL) t_throwable::f_throw(L"alcOpenDevice failed.");
+		if (device == NULL) xemmai::f_throw(L"alcOpenDevice failed.");
 		ALCcontext* context = alcCreateContext(device, NULL);
 		if (context == NULL) {
 			alcCloseDevice(device);
-			t_throwable::f_throw(L"alcCreateContext failed.");
+			xemmai::f_throw(L"alcCreateContext failed.");
 		}
 		t_scoped object = t_object::f_allocate(a_class);
 		object.f_pointer__(new t_device(session->v_devices.insert(std::make_pair(device, static_cast<t_object*>(object))).first, context));
@@ -135,7 +135,7 @@ public:
 	{
 		t_session* session = t_session::f_instance();
 		ALCdevice* device = alcCaptureOpenDevice(a_name ? f_convert(*a_name).c_str() : NULL, a_frequency, a_format, a_buffer);
-		if (device == NULL) t_throwable::f_throw(L"alcCaptureOpenDevice failed.");
+		if (device == NULL) xemmai::f_throw(L"alcCaptureOpenDevice failed.");
 		t_scoped object = t_object::f_allocate(a_class);
 		object.f_pointer__(new t_capture_device(session->v_capture_devices.insert(std::make_pair(device, static_cast<t_object*>(object))).first));
 		return object;
@@ -154,7 +154,7 @@ public:
 	}
 	void f_samples(t_bytes& a_buffer, ALCsizei a_samples)
 	{
-		if (static_cast<ALCsizei>(a_buffer.f_size()) < a_samples) t_throwable::f_throw(L"not enough buffer.");
+		if (static_cast<ALCsizei>(a_buffer.f_size()) < a_samples) xemmai::f_throw(L"not enough buffer.");
 		alcCaptureSamples(v_entry->first, &a_buffer[0], a_samples);
 		f_check_error();
 	}
@@ -171,8 +171,8 @@ struct t_type_of<xemmaix::al::t_base_device> : xemmaix::al::t_holds<xemmaix::al:
 	static void f_define(t_extension* a_extension);
 
 	using t_base::t_base;
-	virtual t_scoped f_construct(t_stacked* a_stack, size_t a_n);
-	virtual void f_instantiate(t_stacked* a_stack, size_t a_n);
+	t_scoped f_do_construct(t_stacked* a_stack, size_t a_n);
+	void f_do_instantiate(t_stacked* a_stack, size_t a_n);
 };
 
 template<>
@@ -181,7 +181,7 @@ struct t_type_of<xemmaix::al::t_device> : t_bears<xemmaix::al::t_device, t_type_
 	static void f_define(t_extension* a_extension);
 
 	using t_base::t_base;
-	virtual t_scoped f_construct(t_stacked* a_stack, size_t a_n);
+	t_scoped f_do_construct(t_stacked* a_stack, size_t a_n);
 };
 
 template<>
@@ -190,7 +190,7 @@ struct t_type_of<xemmaix::al::t_capture_device> : t_bears<xemmaix::al::t_capture
 	static void f_define(t_extension* a_extension);
 
 	using t_base::t_base;
-	virtual t_scoped f_construct(t_stacked* a_stack, size_t a_n);
+	t_scoped f_do_construct(t_stacked* a_stack, size_t a_n);
 };
 
 }
