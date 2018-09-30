@@ -27,7 +27,7 @@ class t_context
 public:
 	void f_destroy()
 	{
-		if (v_entry->first == v_device->v_default) xemmai::f_throw(L"default context can not be destroyed.");
+		if (v_entry->first == v_device->v_default) xemmai::f_throw(L"default context can not be destroyed."sv);
 		alcMakeContextCurrent(v_device->v_default);
 		alcDestroyContext(v_entry->first);
 		v_device->f_check_error();
@@ -71,7 +71,7 @@ public:
 		f_make_current();
 		const ALchar* p = alGetString(a_parameter);
 		t_error::f_check();
-		return f_convert(std::string(p));
+		return f_convert(p);
 	}
 	t_scoped f_get_booleanv(ALenum a_parameter) const
 	{

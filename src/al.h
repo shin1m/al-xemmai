@@ -46,7 +46,7 @@ class t_session
 public:
 	static t_session* f_instance()
 	{
-		if (!v_instance) xemmai::f_throw(L"must be inside main.");
+		if (!v_instance) xemmai::f_throw(L"must be inside main."sv);
 		return v_instance;
 	}
 
@@ -167,7 +167,7 @@ struct t_holds : t_underivable<t_bears<T>>
 		{
 			xemmaix::al::t_session::f_instance();
 			auto p = static_cast<T0*>(t_base::f_object(std::forward<T1>(a_object))->f_pointer());
-			if (!p) xemmai::f_throw(L"already destroyed.");
+			if (!p) xemmai::f_throw(L"already destroyed."sv);
 			return p;
 		}
 	};

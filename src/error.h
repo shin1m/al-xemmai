@@ -13,7 +13,7 @@ class t_error : public t_throwable
 public:
 	static void f_check();
 
-	t_error(const std::wstring& a_message, ALenum a_error) : t_throwable(a_message), v_error(a_error)
+	t_error(std::wstring_view a_message, ALenum a_error) : t_throwable(a_message), v_error(a_error)
 	{
 	}
 	ALenum f_error() const
@@ -24,7 +24,7 @@ public:
 
 struct t_alc_error : t_error
 {
-	t_alc_error(const std::wstring& a_message, ALenum a_error) : t_error(a_message, a_error)
+	t_alc_error(std::wstring_view a_message, ALenum a_error) : t_error(a_message, a_error)
 	{
 	}
 };
@@ -33,7 +33,7 @@ struct t_alut_error : t_error
 {
 	static void f_throw();
 
-	t_alut_error(const std::wstring& a_message, ALenum a_error) : t_error(a_message, a_error)
+	t_alut_error(std::wstring_view a_message, ALenum a_error) : t_error(a_message, a_error)
 	{
 	}
 };
@@ -42,8 +42,8 @@ template<typename T_error>
 inline void f_throw(const ALchar* a_message, ALenum a_error)
 {
 	t_session* session = t_session::f_instance();
-	std::wstring message = f_convert(std::string(a_message));
-	t_scoped object = t_object::f_allocate(session->v_extension->f_type<T_error>());
+	std::wstring message = f_convert(a_message);
+	t_scoped object = t_object::f_allocate(session->v_extension->f_type<T_error>(), false);
 	object.f_pointer__(new T_error(message, a_error));
 	throw object;
 }

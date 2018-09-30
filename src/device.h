@@ -21,7 +21,7 @@ public:
 	{
 		const ALCchar* p = alcGetString(v_entry->first, a_parameter);
 		f_check_error();
-		return f_convert(std::string(p));
+		return f_convert(p);
 	}
 	ALCint f_get_integer(ALCenum a_parameter) const
 	{
@@ -52,17 +52,17 @@ class t_device : public t_base_device
 	t_scoped f_create_buffer(ALuint a_id);
 
 public:
-	static t_scoped f_construct(t_type* a_class, const std::wstring* a_name)
+	static t_scoped f_construct(t_type* a_class, const t_string* a_name)
 	{
 		t_session* session = t_session::f_instance();
 		ALCdevice* device = alcOpenDevice(a_name ? f_convert(*a_name).c_str() : NULL);
-		if (device == NULL) xemmai::f_throw(L"alcOpenDevice failed.");
+		if (device == NULL) xemmai::f_throw(L"alcOpenDevice failed."sv);
 		ALCcontext* context = alcCreateContext(device, NULL);
 		if (context == NULL) {
 			alcCloseDevice(device);
-			xemmai::f_throw(L"alcCreateContext failed.");
+			xemmai::f_throw(L"alcCreateContext failed."sv);
 		}
-		t_scoped object = t_object::f_allocate(a_class);
+		t_scoped object = t_object::f_allocate(a_class, false);
 		object.f_pointer__(new t_device(session->v_devices.insert(std::make_pair(device, static_cast<t_object*>(object))).first, context));
 		return object;
 	}
@@ -81,7 +81,7 @@ public:
 		t_error::f_check();
 		return f_create_buffer(id);
 	}
-	t_scoped f_create_buffer_from_file(const std::wstring& a_path)
+	t_scoped f_create_buffer_from_file(std::wstring_view a_path)
 	{
 		alcMakeContextCurrent(v_default);
 		ALuint id = alutCreateBufferFromFile(f_convert(a_path).c_str());
@@ -114,7 +114,7 @@ public:
 		alcMakeContextCurrent(v_default);
 		const char* types = alutGetMIMETypes(a_loader);
 		if (types == NULL) t_alut_error::f_throw();
-		return f_convert(std::string(types));
+		return f_convert(types);
 	}
 };
 
@@ -131,12 +131,12 @@ class t_capture_device : public t_base_device
 	}
 
 public:
-	static t_scoped f_construct(t_type* a_class, const std::wstring* a_name, ALCuint a_frequency, ALCenum a_format, ALCsizei a_buffer)
+	static t_scoped f_construct(t_type* a_class, const t_string* a_name, ALCuint a_frequency, ALCenum a_format, ALCsizei a_buffer)
 	{
 		t_session* session = t_session::f_instance();
 		ALCdevice* device = alcCaptureOpenDevice(a_name ? f_convert(*a_name).c_str() : NULL, a_frequency, a_format, a_buffer);
-		if (device == NULL) xemmai::f_throw(L"alcCaptureOpenDevice failed.");
-		t_scoped object = t_object::f_allocate(a_class);
+		if (device == NULL) xemmai::f_throw(L"alcCaptureOpenDevice failed."sv);
+		t_scoped object = t_object::f_allocate(a_class, false);
 		object.f_pointer__(new t_capture_device(session->v_capture_devices.insert(std::make_pair(device, static_cast<t_object*>(object))).first));
 		return object;
 	}
@@ -154,7 +154,7 @@ public:
 	}
 	void f_samples(t_bytes& a_buffer, ALCsizei a_samples)
 	{
-		if (static_cast<ALCsizei>(a_buffer.f_size()) < a_samples) xemmai::f_throw(L"not enough buffer.");
+		if (static_cast<ALCsizei>(a_buffer.f_size()) < a_samples) xemmai::f_throw(L"not enough buffer."sv);
 		alcCaptureSamples(v_entry->first, &a_buffer[0], a_samples);
 		f_check_error();
 	}
