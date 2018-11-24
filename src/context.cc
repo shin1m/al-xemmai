@@ -3,23 +3,25 @@
 namespace xemmaix::al
 {
 
-t_context::~t_context()
+void t_context::f_destroy()
 {
-	while (!v_sources.empty()) delete &f_as<t_source&>(v_sources.begin()->second);
-	v_entry->second.f_pointer__(nullptr);
+	if (v_entry->first == v_device->v_default) xemmai::f_throw(L"default context can not be destroyed."sv);
+	alcMakeContextCurrent(v_device->v_default);
+	alcDestroyContext(v_entry->first);
+	v_device->f_check_error();
+	while (!v_sources.empty()) v_sources.begin()->second->f_as<t_source>().f_delete();
 	v_device->v_contexts.erase(v_entry);
+	v_entry = {};
 }
 
 t_scoped t_context::f_create_source()
 {
-	t_session* session = t_session::f_instance();
+	auto session = t_session::f_instance();
 	f_make_current();
 	ALuint id;
 	alGenSources(1, &id);
 	t_error::f_check();
-	t_scoped object = t_object::f_allocate(session->v_extension->f_type<t_source>(), false);
-	object.f_pointer__(new t_source(this, v_sources.insert(std::make_pair(id, static_cast<t_object*>(object))).first));
-	return object;
+	return f_new<t_source>(session->v_extension, false, this, id);
 }
 
 }

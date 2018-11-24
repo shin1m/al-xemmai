@@ -22,8 +22,8 @@ t_session::t_session(t_extension* a_extension) : v_extension(a_extension)
 
 t_session::~t_session()
 {
-	while (!v_devices.empty()) f_as<t_device&>(v_devices.begin()->second).f_close();
-	while (!v_capture_devices.empty()) f_as<t_capture_device&>(v_capture_devices.begin()->second).f_close();
+	while (!v_devices.empty()) v_devices.begin()->second->f_as<t_device>().f_close();
+	while (!v_capture_devices.empty()) v_capture_devices.begin()->second->f_as<t_capture_device>().f_close();
 	std::unique_lock<std::mutex> lock(v_mutex);
 	v_running = false;
 	v_instance = nullptr;
@@ -51,8 +51,8 @@ t_scoped f_alc_get_strings(ALCenum a_parameter)
 	if (p == NULL) return t_scoped();
 	size_t n = 0;
 	for (const ALCchar* q = p; *q != '\0'; q += std::strlen(q) + 1) ++n;
-	t_scoped q = t_tuple::f_instantiate(n);
-	t_tuple& tuple = f_as<t_tuple&>(q);
+	auto q = t_tuple::f_instantiate(n);
+	auto& tuple = f_as<t_tuple&>(q);
 	for (size_t i = 0; i < n; ++i) {
 		tuple[i].f_construct(f_global()->f_as(f_convert(p)));
 		p += std::strlen(p) + 1;

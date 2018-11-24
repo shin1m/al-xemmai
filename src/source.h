@@ -10,18 +10,16 @@ namespace xemmaix::al
 class t_source
 {
 	friend class t_context;
+	friend class t_type_of<t_object>;
+	friend class t_holds<t_source>;
 
 	t_context* v_context;
 	std::map<ALuint, t_scoped>::iterator v_entry;
 
-	t_source(t_context* a_context, std::map<ALuint, t_scoped>::iterator a_entry) : v_context(a_context), v_entry(a_entry)
+	t_source(t_context* a_context, ALuint a_id) : v_context(a_context), v_entry(v_context->v_sources.emplace(a_id, t_object::f_of(this)).first)
 	{
 	}
-	~t_source()
-	{
-		v_entry->second.f_pointer__(nullptr);
-		v_context->v_sources.erase(v_entry);
-	}
+	~t_source() = default;
 
 public:
 	void f_delete()
@@ -29,7 +27,8 @@ public:
 		v_context->f_make_current();
 		alDeleteSources(1, &v_entry->first);
 		t_error::f_check();
-		delete this;
+		v_context->v_sources.erase(v_entry);
+		v_entry = {};
 	}
 	void f_setf(ALenum a_parameter, ALfloat a_value)
 	{
@@ -178,9 +177,13 @@ template<void (*A_function)(ALsizei, const ALuint*)>
 void xemmaix::al::t_context::f_source_do(xemmai::t_extension* a_extension, t_stacked* a_stack, size_t a_n)
 {
 	t_destruct_n destruct(a_stack, a_n);
-	f_as<t_context&>(a_stack[1]).f_make_current();
+	f_check<t_context>(*++a_stack, L"context");
+	(*a_stack)->f_as<t_context>().f_make_current();
 	std::vector<ALuint> ids(a_n);
-	for (size_t i = 0; i < a_n; ++i) ids[i] = f_as<t_source&>(a_stack[i + 2]).v_entry->first;
+	for (size_t i = 0; i < a_n; ++i) {
+		f_check<t_source>(*++a_stack, L"source");
+		ids[i] = (*a_stack)->f_as<t_source>().v_entry->first;
+	}
 	A_function(a_n, &ids[0]);
 	t_error::f_check();
 }

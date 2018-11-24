@@ -11,52 +11,48 @@ void t_base_device::f_check_error() const
 	if (error != ALC_NO_ERROR) f_throw<t_alc_error>(alcGetString(v_entry->first, error), error);
 }
 
-t_device::t_device(std::map<ALCdevice*, t_scoped>::iterator a_entry, ALCcontext* a_default) : t_base_device(a_entry), v_default(a_default)
+t_device::t_device(t_session* a_session, ALCdevice* a_device, ALCcontext* a_default) : t_base_device(a_session->v_devices.emplace(a_device, t_object::f_of(this)).first), v_default(a_default)
 {
-	t_session* session = t_session::f_instance();
 	alcMakeContextCurrent(v_default);
-	t_scoped object = t_object::f_allocate(session->v_extension->f_type<t_context>(), false);
-	object.f_pointer__(new t_context(this, v_contexts.insert(std::make_pair(v_default, static_cast<t_object*>(object))).first));
+	f_new<t_context>(a_session->v_extension, false, this, v_default);
 }
 
 t_scoped t_device::f_create_buffer(ALuint a_id)
 {
-	t_session* session = t_session::f_instance();
-	t_scoped object = t_object::f_allocate(session->v_extension->f_type<t_buffer>(), false);
-	object.f_pointer__(new t_buffer(this, v_buffers.insert(std::make_pair(a_id, static_cast<t_object*>(object))).first));
-	return object;
+	return f_new<t_buffer>(t_session::f_instance()->v_extension, false, this, a_id);
 }
 
 void t_device::f_close()
 {
-	t_context& context = f_as<t_context&>(v_contexts.find(v_default)->second);
-	while (!context.v_sources.empty()) f_as<t_source&>(context.v_sources.begin()->second).f_delete();
-	delete &context;
-	while (!v_contexts.empty()) f_as<t_context&>(v_contexts.begin()->second).f_destroy();
+	auto& context = v_contexts.find(v_default)->second->f_as<t_context>();
+	while (!context.v_sources.empty()) context.v_sources.begin()->second->f_as<t_source>().f_delete();
+	v_contexts.erase(v_default);
+	context.v_entry = {};
+	while (!v_contexts.empty()) v_contexts.begin()->second->f_as<t_context>().f_destroy();
 	alcMakeContextCurrent(v_default);
-	while (!v_buffers.empty()) f_as<t_buffer&>(v_buffers.begin()->second).f_delete();
+	while (!v_buffers.empty()) v_buffers.begin()->second->f_as<t_buffer>().f_delete();
 	alcMakeContextCurrent(NULL);
 	f_check_error();
 	alcDestroyContext(v_default);
 	f_check_error();
 	if (alcCloseDevice(v_entry->first) != ALC_TRUE) xemmai::f_throw(L"alcCloseDevice failed."sv);
-	delete this;
+	t_session::f_instance()->v_devices.erase(v_entry);
+	v_entry = {};
 }
 
 t_scoped t_device::f_create_context()
 {
-	t_session* session = t_session::f_instance();
+	auto session = t_session::f_instance();
 	ALCcontext* context = alcCreateContext(v_entry->first, NULL);
 	if (context == NULL) f_check_error();
-	t_scoped object = t_object::f_allocate(session->v_extension->f_type<t_context>(), false);
-	object.f_pointer__(new t_context(this, v_contexts.insert(std::make_pair(context, static_cast<t_object*>(object))).first));
-	return object;
+	return f_new<t_context>(session->v_extension, false, this, context);
 }
 
 void t_capture_device::f_close()
 {
 	if (alcCaptureCloseDevice(v_entry->first) != ALC_TRUE) xemmai::f_throw(L"alcCaptureCloseDevice failed."sv);
-	delete this;
+	t_session::f_instance()->v_capture_devices.erase(v_entry);
+	v_entry = {};
 }
 
 }

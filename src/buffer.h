@@ -10,25 +10,24 @@ class t_buffer
 {
 	friend class t_device;
 	friend class t_source;
+	friend class t_type_of<t_object>;
+	friend class t_holds<t_buffer>;
 
 	t_device* v_device;
 	std::map<ALuint, t_scoped>::iterator v_entry;
 
-	t_buffer(t_device* a_device, std::map<ALuint, t_scoped>::iterator a_entry) : v_device(a_device), v_entry(a_entry)
+	t_buffer(t_device* a_device, ALuint a_id) : v_device(a_device), v_entry(v_device->v_buffers.emplace(a_id, t_object::f_of(this)).first)
 	{
 	}
-	~t_buffer()
-	{
-		v_entry->second.f_pointer__(nullptr);
-		v_device->v_buffers.erase(v_entry);
-	}
+	~t_buffer() = default;
 
 public:
 	void f_delete()
 	{
 		alDeleteBuffers(1, &v_entry->first);
 		t_error::f_check();
-		delete this;
+		v_device->v_buffers.erase(v_entry);
+		v_entry = {};
 	}
 	void f_data(ALenum a_format, const t_bytes& a_data, ALsizei a_size, ALsizei a_frequency)
 	{

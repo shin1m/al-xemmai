@@ -10,29 +10,24 @@ class t_context
 {
 	friend class t_device;
 	friend class t_source;
+	friend class t_type_of<t_object>;
+	friend class t_holds<t_context>;
 
 	t_device* v_device;
 	std::map<ALCcontext*, t_scoped>::iterator v_entry;
 	std::map<ALuint, t_scoped> v_sources;
 
-	t_context(t_device* a_device, std::map<ALCcontext*, t_scoped>::iterator a_entry) : v_device(a_device), v_entry(a_entry)
+	t_context(t_device* a_device, ALCcontext* a_context) : v_device(a_device), v_entry(v_device->v_contexts.emplace(a_context, t_object::f_of(this)).first)
 	{
 	}
-	~t_context();
+	~t_context() = default;
 	void f_make_current() const
 	{
 		alcMakeContextCurrent(v_entry->first);
 	}
 
 public:
-	void f_destroy()
-	{
-		if (v_entry->first == v_device->v_default) xemmai::f_throw(L"default context can not be destroyed."sv);
-		alcMakeContextCurrent(v_device->v_default);
-		alcDestroyContext(v_entry->first);
-		v_device->f_check_error();
-		delete this;
-	}
+	void f_destroy();
 	void f_process()
 	{
 		alcProcessContext(v_entry->first);

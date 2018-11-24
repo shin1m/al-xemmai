@@ -8,6 +8,8 @@ namespace xemmaix::al
 
 class t_base_device
 {
+	friend class t_holds<t_base_device>;
+
 protected:
 	std::map<ALCdevice*, t_scoped>::iterator v_entry;
 
@@ -37,24 +39,20 @@ class t_device : public t_base_device
 	friend class t_context;
 	friend class t_source;
 	friend class t_buffer;
+	friend class t_type_of<t_object>;
 
 	ALCcontext* v_default;
 	std::map<ALCcontext*, t_scoped> v_contexts;
 	std::map<ALuint, t_scoped> v_buffers;
 
-	t_device(std::map<ALCdevice*, t_scoped>::iterator a_entry, ALCcontext* a_default);
-	~t_device()
-	{
-		v_entry->second.f_pointer__(nullptr);
-		t_session* session = t_session::f_instance();
-		session->v_devices.erase(v_entry);
-	}
+	t_device(t_session* a_session, ALCdevice* a_device, ALCcontext* a_default);
+	~t_device() = default;
 	t_scoped f_create_buffer(ALuint a_id);
 
 public:
 	static t_scoped f_construct(t_type* a_class, const t_string* a_name)
 	{
-		t_session* session = t_session::f_instance();
+		auto session = t_session::f_instance();
 		ALCdevice* device = alcOpenDevice(a_name ? f_convert(*a_name).c_str() : NULL);
 		if (device == NULL) xemmai::f_throw(L"alcOpenDevice failed."sv);
 		ALCcontext* context = alcCreateContext(device, NULL);
@@ -62,9 +60,7 @@ public:
 			alcCloseDevice(device);
 			xemmai::f_throw(L"alcCreateContext failed."sv);
 		}
-		t_scoped object = t_object::f_allocate(a_class, false);
-		object.f_pointer__(new t_device(session->v_devices.insert(std::make_pair(device, static_cast<t_object*>(object))).first, context));
-		return object;
+		return a_class->f_new<t_device>(false, session, device, context);
 	}
 
 	void f_close();
@@ -120,25 +116,20 @@ public:
 
 class t_capture_device : public t_base_device
 {
-	t_capture_device(std::map<ALCdevice*, t_scoped>::iterator a_entry) : t_base_device(a_entry)
+	friend class t_type_of<t_object>;
+
+	t_capture_device(t_session* a_session, ALCdevice* a_device) : t_base_device(a_session->v_capture_devices.emplace(a_device, t_object::f_of(this)).first)
 	{
 	}
-	~t_capture_device()
-	{
-		v_entry->second.f_pointer__(nullptr);
-		t_session* session = t_session::f_instance();
-		session->v_capture_devices.erase(v_entry);
-	}
+	~t_capture_device() = default;
 
 public:
 	static t_scoped f_construct(t_type* a_class, const t_string* a_name, ALCuint a_frequency, ALCenum a_format, ALCsizei a_buffer)
 	{
-		t_session* session = t_session::f_instance();
+		auto session = t_session::f_instance();
 		ALCdevice* device = alcCaptureOpenDevice(a_name ? f_convert(*a_name).c_str() : NULL, a_frequency, a_format, a_buffer);
 		if (device == NULL) xemmai::f_throw(L"alcCaptureOpenDevice failed."sv);
-		t_scoped object = t_object::f_allocate(a_class, false);
-		object.f_pointer__(new t_capture_device(session->v_capture_devices.insert(std::make_pair(device, static_cast<t_object*>(object))).first));
-		return object;
+		return a_class->f_new<t_capture_device>(false, session, device);
 	}
 
 	void f_close();
