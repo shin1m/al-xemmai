@@ -41,7 +41,7 @@ struct t_alut_error : t_error
 template<typename T_error>
 inline void f_throw(const ALchar* a_message, ALenum a_error)
 {
-	throw f_new<T_error>(t_session::f_instance()->v_extension, false, f_convert(a_message), a_error);
+	throw t_rvalue(f_new<T_error>(t_session::f_instance()->v_extension, false, f_convert(a_message), a_error));
 }
 
 }

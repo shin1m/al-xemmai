@@ -14,9 +14,9 @@ void t_type_of<xemmaix::al::t_buffer>::f_define(t_extension* a_extension)
 		(L"seti"sv, t_member<void(t_buffer::*)(ALenum, ALint), &t_buffer::f_seti>())
 		(L"set3i"sv, t_member<void(t_buffer::*)(ALenum, ALint, ALint, ALint), &t_buffer::f_set3i>())
 		(L"getf"sv, t_member<ALfloat(t_buffer::*)(ALenum) const, &t_buffer::f_getf>())
-		(L"get3f"sv, t_member<t_scoped(t_buffer::*)(ALenum) const, &t_buffer::f_get3f>())
+		(L"get3f"sv, t_member<t_pvalue(t_buffer::*)(ALenum) const, &t_buffer::f_get3f>())
 		(L"geti"sv, t_member<ALint(t_buffer::*)(ALenum) const, &t_buffer::f_geti>())
-		(L"get3i"sv, t_member<t_scoped(t_buffer::*)(ALenum) const, &t_buffer::f_get3i>())
+		(L"get3i"sv, t_member<t_pvalue(t_buffer::*)(ALenum) const, &t_buffer::f_get3i>())
 	;
 }
 

@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 3.10)
+project(al-xemmai VERSION 202102)
+find_package(xemmai 202102 REQUIRED)
+find_package(OpenAL 1.1 REQUIRED)
+find_package(PkgConfig)
+pkg_check_modules(ALUT REQUIRED freealut>=1.1)
+add_subdirectory(src)
+install(TARGETS al DESTINATION lib/xemmai-${xemmai_VERSION_MAJOR})

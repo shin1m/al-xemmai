@@ -14,7 +14,7 @@ class t_buffer
 	friend class t_holds<t_buffer>;
 
 	t_device* v_device;
-	std::map<ALuint, t_scoped>::iterator v_entry;
+	std::map<ALuint, t_root>::iterator v_entry;
 
 	t_buffer(t_device* a_device, ALuint a_id) : v_device(a_device), v_entry(v_device->v_buffers.emplace(a_id, t_object::f_of(this)).first)
 	{
@@ -62,7 +62,7 @@ public:
 		t_error::f_check();
 		return value;
 	}
-	t_scoped f_get3f(ALenum a_parameter) const
+	t_pvalue f_get3f(ALenum a_parameter) const
 	{
 		ALfloat value1;
 		ALfloat value2;
@@ -78,7 +78,7 @@ public:
 		t_error::f_check();
 		return value;
 	}
-	t_scoped f_get3i(ALenum a_parameter) const
+	t_pvalue f_get3i(ALenum a_parameter) const
 	{
 		ALint value1;
 		ALint value2;

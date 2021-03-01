@@ -11,9 +11,9 @@ class t_base_device
 	friend class t_holds<t_base_device>;
 
 protected:
-	std::map<ALCdevice*, t_scoped>::iterator v_entry;
+	std::map<ALCdevice*, t_root>::iterator v_entry;
 
-	t_base_device(std::map<ALCdevice*, t_scoped>::iterator a_entry) : v_entry(a_entry)
+	t_base_device(std::map<ALCdevice*, t_root>::iterator a_entry) : v_entry(a_entry)
 	{
 	}
 	void f_check_error() const;
@@ -42,15 +42,15 @@ class t_device : public t_base_device
 	friend class t_type_of<t_object>;
 
 	ALCcontext* v_default;
-	std::map<ALCcontext*, t_scoped> v_contexts;
-	std::map<ALuint, t_scoped> v_buffers;
+	std::map<ALCcontext*, t_root> v_contexts;
+	std::map<ALuint, t_root> v_buffers;
 
 	t_device(t_session* a_session, ALCdevice* a_device, ALCcontext* a_default);
 	~t_device() = default;
-	t_scoped f_create_buffer(ALuint a_id);
+	t_pvalue f_create_buffer(ALuint a_id);
 
 public:
-	static t_scoped f_construct(t_type* a_class, const t_string* a_name)
+	static t_pvalue f_construct(t_type* a_class, const t_string* a_name)
 	{
 		auto session = t_session::f_instance();
 		ALCdevice* device = alcOpenDevice(a_name ? f_convert(*a_name).c_str() : NULL);
@@ -64,12 +64,12 @@ public:
 	}
 
 	void f_close();
-	t_scoped f_default_context() const
+	t_pvalue f_default_context() const
 	{
-		return v_contexts.find(v_default)->second;
+		return static_cast<t_object*>(v_contexts.find(v_default)->second);
 	}
-	t_scoped f_create_context();
-	t_scoped f_create_buffer()
+	t_pvalue f_create_context();
+	t_pvalue f_create_buffer()
 	{
 		alcMakeContextCurrent(v_default);
 		ALuint id;
@@ -77,28 +77,28 @@ public:
 		t_error::f_check();
 		return f_create_buffer(id);
 	}
-	t_scoped f_create_buffer_from_file(std::wstring_view a_path)
+	t_pvalue f_create_buffer_from_file(std::wstring_view a_path)
 	{
 		alcMakeContextCurrent(v_default);
 		ALuint id = alutCreateBufferFromFile(f_convert(a_path).c_str());
 		if (id == AL_NONE) t_alut_error::f_throw();
 		return f_create_buffer(id);
 	}
-	t_scoped f_create_buffer_from_file_image(const t_bytes& a_data)
+	t_pvalue f_create_buffer_from_file_image(const t_bytes& a_data)
 	{
 		alcMakeContextCurrent(v_default);
 		ALuint id = alutCreateBufferFromFileImage(&a_data[0], a_data.f_size());
 		if (id == AL_NONE) t_alut_error::f_throw();
 		return f_create_buffer(id);
 	}
-	t_scoped f_create_buffer_hello_world()
+	t_pvalue f_create_buffer_hello_world()
 	{
 		alcMakeContextCurrent(v_default);
 		ALuint id = alutCreateBufferHelloWorld();
 		if (id == AL_NONE) t_alut_error::f_throw();
 		return f_create_buffer(id);
 	}
-	t_scoped f_create_buffer_waveform(ALenum a_shape, ALfloat a_frequency, ALfloat a_phase, ALfloat a_duration)
+	t_pvalue f_create_buffer_waveform(ALenum a_shape, ALfloat a_frequency, ALfloat a_phase, ALfloat a_duration)
 	{
 		alcMakeContextCurrent(v_default);
 		ALuint id = alutCreateBufferWaveform(a_shape, a_frequency, a_phase, a_duration);
@@ -124,7 +124,7 @@ class t_capture_device : public t_base_device
 	~t_capture_device() = default;
 
 public:
-	static t_scoped f_construct(t_type* a_class, const t_string* a_name, ALCuint a_frequency, ALCenum a_format, ALCsizei a_buffer)
+	static t_pvalue f_construct(t_type* a_class, const t_string* a_name, ALCuint a_frequency, ALCenum a_format, ALCsizei a_buffer)
 	{
 		auto session = t_session::f_instance();
 		ALCdevice* device = alcCaptureOpenDevice(a_name ? f_convert(*a_name).c_str() : NULL, a_frequency, a_format, a_buffer);
@@ -162,8 +162,8 @@ struct t_type_of<xemmaix::al::t_base_device> : xemmaix::al::t_holds<xemmaix::al:
 	static void f_define(t_extension* a_extension);
 
 	using t_base::t_base;
-	t_scoped f_do_construct(t_stacked* a_stack, size_t a_n);
-	void f_do_instantiate(t_stacked* a_stack, size_t a_n);
+	t_pvalue f_do_construct(t_pvalue* a_stack, size_t a_n);
+	void f_do_instantiate(t_pvalue* a_stack, size_t a_n);
 };
 
 template<>
@@ -172,7 +172,7 @@ struct t_type_of<xemmaix::al::t_device> : t_bears<xemmaix::al::t_device, t_type_
 	static void f_define(t_extension* a_extension);
 
 	using t_base::t_base;
-	t_scoped f_do_construct(t_stacked* a_stack, size_t a_n);
+	t_pvalue f_do_construct(t_pvalue* a_stack, size_t a_n);
 };
 
 template<>
@@ -181,7 +181,7 @@ struct t_type_of<xemmaix::al::t_capture_device> : t_bears<xemmaix::al::t_capture
 	static void f_define(t_extension* a_extension);
 
 	using t_base::t_base;
-	t_scoped f_do_construct(t_stacked* a_stack, size_t a_n);
+	t_pvalue f_do_construct(t_pvalue* a_stack, size_t a_n);
 };
 
 }

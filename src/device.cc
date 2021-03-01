@@ -17,7 +17,7 @@ t_device::t_device(t_session* a_session, ALCdevice* a_device, ALCcontext* a_defa
 	f_new<t_context>(a_session->v_extension, false, this, v_default);
 }
 
-t_scoped t_device::f_create_buffer(ALuint a_id)
+t_pvalue t_device::f_create_buffer(ALuint a_id)
 {
 	return f_new<t_buffer>(t_session::f_instance()->v_extension, false, this, a_id);
 }
@@ -40,7 +40,7 @@ void t_device::f_close()
 	v_entry = {};
 }
 
-t_scoped t_device::f_create_context()
+t_pvalue t_device::f_create_context()
 {
 	auto session = t_session::f_instance();
 	ALCcontext* context = alcCreateContext(v_entry->first, NULL);
@@ -69,15 +69,14 @@ void t_type_of<xemmaix::al::t_base_device>::f_define(t_extension* a_extension)
 	;
 }
 
-t_scoped t_type_of<xemmaix::al::t_base_device>::f_do_construct(t_stacked* a_stack, size_t a_n)
+t_pvalue t_type_of<xemmaix::al::t_base_device>::f_do_construct(t_pvalue* a_stack, size_t a_n)
 {
 	f_throw(L"uninstantiatable."sv);
 }
 
-void t_type_of<xemmaix::al::t_base_device>::f_do_instantiate(t_stacked* a_stack, size_t a_n)
+void t_type_of<xemmaix::al::t_base_device>::f_do_instantiate(t_pvalue* a_stack, size_t a_n)
 {
-	t_destruct_n destruct(a_stack, a_n);
-	a_stack[0].f_construct(f_construct(a_stack, a_n));
+	a_stack[0] = f_construct(a_stack, a_n);
 }
 
 void t_type_of<xemmaix::al::t_device>::f_define(t_extension* a_extension)
@@ -85,20 +84,20 @@ void t_type_of<xemmaix::al::t_device>::f_define(t_extension* a_extension)
 	using namespace xemmaix::al;
 	t_define<t_device, t_base_device>(a_extension, L"Device"sv)
 		(L"close"sv, t_member<void(t_device::*)(), &t_device::f_close>())
-		(L"default_context"sv, t_member<t_scoped(t_device::*)() const, &t_device::f_default_context>())
-		(L"create_context"sv, t_member<t_scoped(t_device::*)(), &t_device::f_create_context>())
-		(L"create_buffer"sv, t_member<t_scoped(t_device::*)(), &t_device::f_create_buffer>())
-		(L"create_buffer_from_file"sv, t_member<t_scoped(t_device::*)(std::wstring_view), &t_device::f_create_buffer_from_file>())
-		(L"create_buffer_from_file_image"sv, t_member<t_scoped(t_device::*)(const t_bytes&), &t_device::f_create_buffer_from_file_image>())
-		(L"create_buffer_hello_world"sv, t_member<t_scoped(t_device::*)(), &t_device::f_create_buffer_hello_world>())
-		(L"create_buffer_waveform"sv, t_member<t_scoped(t_device::*)(ALenum, ALfloat, ALfloat, ALfloat), &t_device::f_create_buffer_waveform>())
+		(L"default_context"sv, t_member<t_pvalue(t_device::*)() const, &t_device::f_default_context>())
+		(L"create_context"sv, t_member<t_pvalue(t_device::*)(), &t_device::f_create_context>())
+		(L"create_buffer"sv, t_member<t_pvalue(t_device::*)(), &t_device::f_create_buffer>())
+		(L"create_buffer_from_file"sv, t_member<t_pvalue(t_device::*)(std::wstring_view), &t_device::f_create_buffer_from_file>())
+		(L"create_buffer_from_file_image"sv, t_member<t_pvalue(t_device::*)(const t_bytes&), &t_device::f_create_buffer_from_file_image>())
+		(L"create_buffer_hello_world"sv, t_member<t_pvalue(t_device::*)(), &t_device::f_create_buffer_hello_world>())
+		(L"create_buffer_waveform"sv, t_member<t_pvalue(t_device::*)(ALenum, ALfloat, ALfloat, ALfloat), &t_device::f_create_buffer_waveform>())
 		(L"get_mime_types"sv, t_member<std::wstring(t_device::*)(ALenum) const, &t_device::f_get_mime_types>())
 	;
 }
 
-t_scoped t_type_of<xemmaix::al::t_device>::f_do_construct(t_stacked* a_stack, size_t a_n)
+t_pvalue t_type_of<xemmaix::al::t_device>::f_do_construct(t_pvalue* a_stack, size_t a_n)
 {
-	return t_construct_with<t_scoped(*)(t_type*, const t_string*), xemmaix::al::t_device::f_construct>::t_bind<xemmaix::al::t_device>::f_do(this, a_stack, a_n);
+	return t_construct_with<t_pvalue(*)(t_type*, const t_string*), xemmaix::al::t_device::f_construct>::t_bind<xemmaix::al::t_device>::f_do(this, a_stack, a_n);
 }
 
 void t_type_of<xemmaix::al::t_capture_device>::f_define(t_extension* a_extension)
@@ -112,9 +111,9 @@ void t_type_of<xemmaix::al::t_capture_device>::f_define(t_extension* a_extension
 	;
 }
 
-t_scoped t_type_of<xemmaix::al::t_capture_device>::f_do_construct(t_stacked* a_stack, size_t a_n)
+t_pvalue t_type_of<xemmaix::al::t_capture_device>::f_do_construct(t_pvalue* a_stack, size_t a_n)
 {
-	return t_construct_with<t_scoped(*)(t_type*, const t_string*, ALCuint, ALCenum, ALCsizei), xemmaix::al::t_capture_device::f_construct>::t_bind<xemmaix::al::t_capture_device>::f_do(this, a_stack, a_n);
+	return t_construct_with<t_pvalue(*)(t_type*, const t_string*, ALCuint, ALCenum, ALCsizei), xemmaix::al::t_capture_device::f_construct>::t_bind<xemmaix::al::t_capture_device>::f_do(this, a_stack, a_n);
 }
 
 }

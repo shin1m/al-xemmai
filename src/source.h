@@ -14,7 +14,7 @@ class t_source
 	friend class t_holds<t_source>;
 
 	t_context* v_context;
-	std::map<ALuint, t_scoped>::iterator v_entry;
+	std::map<ALuint, t_root>::iterator v_entry;
 
 	t_source(t_context* a_context, ALuint a_id) : v_context(a_context), v_entry(v_context->v_sources.emplace(a_id, t_object::f_of(this)).first)
 	{
@@ -68,7 +68,7 @@ public:
 		t_error::f_check();
 		return value;
 	}
-	t_scoped f_get3f(ALenum a_parameter) const
+	t_pvalue f_get3f(ALenum a_parameter) const
 	{
 		v_context->f_make_current();
 		ALfloat value1;
@@ -86,7 +86,7 @@ public:
 		t_error::f_check();
 		return value;
 	}
-	t_scoped f_get3i(ALenum a_parameter) const
+	t_pvalue f_get3i(ALenum a_parameter) const
 	{
 		v_context->f_make_current();
 		ALint value1;
@@ -134,13 +134,13 @@ public:
 		alSourcei(v_entry->first, AL_BUFFER, a_buffer ? a_buffer->v_entry->first : AL_NONE);
 		t_error::f_check();
 	}
-	t_scoped f_get_buffer() const
+	t_pvalue f_get_buffer() const
 	{
 		v_context->f_make_current();
 		ALint id;
 		alGetSourcei(v_entry->first, AL_BUFFER, &id);
 		t_error::f_check();
-		return v_context->v_device->v_buffers.find(id)->second;
+		return static_cast<t_object*>(v_context->v_device->v_buffers.find(id)->second);
 	}
 	void f_queue_buffer(t_buffer& a_buffer)
 	{
@@ -148,13 +148,13 @@ public:
 		alSourceQueueBuffers(v_entry->first, 1, &a_buffer.v_entry->first);
 		t_error::f_check();
 	}
-	t_scoped f_unqueue_buffer()
+	t_pvalue f_unqueue_buffer()
 	{
 		v_context->f_make_current();
 		ALuint id;
 		alSourceUnqueueBuffers(v_entry->first, 1, &id);
 		t_error::f_check();
-		return v_context->v_device->v_buffers.find(id)->second;
+		return static_cast<t_object*>(v_context->v_device->v_buffers.find(id)->second);
 	}
 };
 
@@ -174,9 +174,8 @@ struct t_type_of<xemmaix::al::t_source> : t_uninstantiatable<xemmaix::al::t_hold
 }
 
 template<void (*A_function)(ALsizei, const ALuint*)>
-void xemmaix::al::t_context::f_source_do(xemmai::t_extension* a_extension, t_stacked* a_stack, size_t a_n)
+void xemmaix::al::t_context::f_source_do(xemmai::t_extension* a_extension, t_pvalue* a_stack, size_t a_n)
 {
-	t_destruct_n destruct(a_stack, a_n);
 	f_check<t_context>(*++a_stack, L"context");
 	(*a_stack)->f_as<t_context>().f_make_current();
 	std::vector<ALuint> ids(a_n);

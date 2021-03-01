@@ -14,8 +14,8 @@ class t_context
 	friend class t_holds<t_context>;
 
 	t_device* v_device;
-	std::map<ALCcontext*, t_scoped>::iterator v_entry;
-	std::map<ALuint, t_scoped> v_sources;
+	std::map<ALCcontext*, t_root>::iterator v_entry;
+	std::map<ALuint, t_root> v_sources;
 
 	t_context(t_device* a_device, ALCcontext* a_context) : v_device(a_device), v_entry(v_device->v_contexts.emplace(a_context, t_object::f_of(this)).first)
 	{
@@ -38,9 +38,9 @@ public:
 		alcSuspendContext(v_entry->first);
 		v_device->f_check_error();
 	}
-	t_scoped f_get_device() const
+	t_pvalue f_get_device() const
 	{
-		return v_device->v_entry->second;
+		return static_cast<t_object*>(v_device->v_entry->second);
 	}
 	void f_enable(ALenum a_capability)
 	{
@@ -68,7 +68,7 @@ public:
 		t_error::f_check();
 		return f_convert(p);
 	}
-	t_scoped f_get_booleanv(ALenum a_parameter) const
+	t_pvalue f_get_booleanv(ALenum a_parameter) const
 	{
 		f_make_current();
 		ALboolean data[3];
@@ -76,7 +76,7 @@ public:
 		t_error::f_check();
 		return f_tuple(data[0] != AL_FALSE, data[1] != AL_FALSE, data[2] != AL_FALSE);
 	}
-	t_scoped f_get_integerv(ALenum a_parameter) const
+	t_pvalue f_get_integerv(ALenum a_parameter) const
 	{
 		f_make_current();
 		ALint data[3];
@@ -84,7 +84,7 @@ public:
 		t_error::f_check();
 		return f_tuple(data[0], data[1], data[2]);
 	}
-	t_scoped f_get_floatv(ALenum a_parameter) const
+	t_pvalue f_get_floatv(ALenum a_parameter) const
 	{
 		f_make_current();
 		ALfloat data[3];
@@ -92,7 +92,7 @@ public:
 		t_error::f_check();
 		return f_tuple(data[0], data[1], data[2]);
 	}
-	t_scoped f_get_doublev(ALenum a_parameter) const
+	t_pvalue f_get_doublev(ALenum a_parameter) const
 	{
 		f_make_current();
 		ALdouble data[3];
@@ -180,7 +180,7 @@ public:
 		t_error::f_check();
 		return value;
 	}
-	t_scoped f_get_listener3f(ALenum a_parameter) const
+	t_pvalue f_get_listener3f(ALenum a_parameter) const
 	{
 		f_make_current();
 		ALfloat value1;
@@ -190,7 +190,7 @@ public:
 		t_error::f_check();
 		return f_tuple(value1, value2, value3);
 	}
-	t_scoped f_get_listenerfv(ALenum a_parameter) const
+	t_pvalue f_get_listenerfv(ALenum a_parameter) const
 	{
 		f_make_current();
 		ALfloat values[6];
@@ -206,7 +206,7 @@ public:
 		t_error::f_check();
 		return value;
 	}
-	t_scoped f_get_listener3i(ALenum a_parameter) const
+	t_pvalue f_get_listener3i(ALenum a_parameter) const
 	{
 		f_make_current();
 		ALint value1;
@@ -216,7 +216,7 @@ public:
 		t_error::f_check();
 		return f_tuple(value1, value2, value3);
 	}
-	t_scoped f_get_listeneriv(ALenum a_parameter) const
+	t_pvalue f_get_listeneriv(ALenum a_parameter) const
 	{
 		f_make_current();
 		ALint values[6];
@@ -224,9 +224,9 @@ public:
 		t_error::f_check();
 		return f_tuple(values[0], values[1], values[2], values[3], values[4], values[5]);
 	}
-	t_scoped f_create_source();
+	t_pvalue f_create_source();
 	template<void (*A_function)(ALsizei, const ALuint*)>
-	static void f_source_do(xemmai::t_extension* a_extension, t_stacked* a_stack, size_t a_n);
+	static void f_source_do(xemmai::t_extension* a_extension, t_pvalue* a_stack, size_t a_n);
 	void f_doppler_factor(ALfloat a_value)
 	{
 		f_make_current();

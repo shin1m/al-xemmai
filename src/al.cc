@@ -33,28 +33,28 @@ t_session::~t_session()
 namespace
 {
 
-void f_main(t_extension* a_extension, const t_value& a_callable)
+void f_main(t_extension* a_extension, const t_pvalue& a_callable)
 {
 	t_session session(a_extension);
 	a_callable();
 }
 
-t_scoped f_alc_get_string(ALCenum a_parameter)
+t_pvalue f_alc_get_string(ALCenum a_parameter)
 {
 	const ALCchar* p = alcGetString(NULL, a_parameter);
-	return p == NULL ? t_scoped() : f_global()->f_as(f_convert(p));
+	return p == NULL ? t_pvalue() : f_global()->f_as(f_convert(p));
 }
 
-t_scoped f_alc_get_strings(ALCenum a_parameter)
+t_pvalue f_alc_get_strings(ALCenum a_parameter)
 {
 	const ALCchar* p = alcGetString(NULL, a_parameter);
-	if (p == NULL) return t_scoped();
+	if (p == NULL) return {};
 	size_t n = 0;
 	for (const ALCchar* q = p; *q != '\0'; q += std::strlen(q) + 1) ++n;
 	auto q = t_tuple::f_instantiate(n);
 	auto& tuple = f_as<t_tuple&>(q);
 	for (size_t i = 0; i < n; ++i) {
-		tuple[i].f_construct(f_global()->f_as(f_convert(p)));
+		new(&tuple[i]) t_svalue(f_global()->f_as(f_convert(p)));
 		p += std::strlen(p) + 1;
 	}
 	return q;
@@ -71,9 +71,9 @@ t_extension::t_extension(t_object* a_module) : xemmai::t_extension(a_module)
 	t_type_of<t_context>::f_define(this);
 	t_type_of<t_source>::f_define(this);
 	t_type_of<t_buffer>::f_define(this);
-	f_define<void (*)(t_extension*, const t_value&), f_main>(this, L"main"sv);
-	f_define<t_scoped (*)(ALCenum), f_alc_get_string>(this, L"alc_get_string"sv);
-	f_define<t_scoped (*)(ALCenum), f_alc_get_strings>(this, L"alc_get_strings"sv);
+	f_define<void(*)(t_extension*, const t_pvalue&), f_main>(this, L"main"sv);
+	f_define<t_pvalue(*)(ALCenum), f_alc_get_string>(this, L"alc_get_string"sv);
+	f_define<t_pvalue(*)(ALCenum), f_alc_get_strings>(this, L"alc_get_strings"sv);
 	a_module->f_put(t_symbol::f_instantiate(L"SOURCE_RELATIVE"sv), f_as(AL_SOURCE_RELATIVE));
 	a_module->f_put(t_symbol::f_instantiate(L"CONE_INNER_ANGLE"sv), f_as(AL_CONE_INNER_ANGLE));
 	a_module->f_put(t_symbol::f_instantiate(L"CONE_OUTER_ANGLE"sv), f_as(AL_CONE_OUTER_ANGLE));
