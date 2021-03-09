@@ -51,13 +51,13 @@ t_pvalue f_alc_get_strings(ALCenum a_parameter)
 	if (p == NULL) return {};
 	size_t n = 0;
 	for (const ALCchar* q = p; *q != '\0'; q += std::strlen(q) + 1) ++n;
-	auto q = t_tuple::f_instantiate(n);
-	auto& tuple = f_as<t_tuple&>(q);
-	for (size_t i = 0; i < n; ++i) {
-		new(&tuple[i]) t_svalue(f_global()->f_as(f_convert(p)));
-		p += std::strlen(p) + 1;
-	}
-	return q;
+	return t_tuple::f_instantiate(n, [&](auto& tuple)
+	{
+		for (size_t i = 0; i < n; ++i) {
+			new(&tuple[i]) t_svalue(f_global()->f_as(f_convert(p)));
+			p += std::strlen(p) + 1;
+		}
+	});
 }
 
 }
