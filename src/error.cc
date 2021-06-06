@@ -20,14 +20,14 @@ void t_alut_error::f_throw()
 namespace xemmai
 {
 
-void t_type_of<xemmaix::al::t_error>::f_define(t_extension* a_extension)
+void t_type_of<xemmaix::al::t_error>::f_define(t_library* a_library)
 {
 	using namespace xemmaix::al;
-	t_define<t_error, t_throwable>(a_extension, L"Error"sv)
+	t_define{a_library}
 		(L"error"sv, t_member<ALenum(t_error::*)() const, &t_error::f_error>())
-	;
-	t_define<t_alc_error, t_error>(a_extension, L"ALCError"sv);
-	t_define<t_alut_error, t_error>(a_extension, L"ALUTError"sv);
+	.f_derive<t_error, t_throwable>();
+	t_define{a_library}.f_derive<t_alc_error, t_error>();
+	t_define{a_library}.f_derive<t_alut_error, t_error>();
 }
 
 }

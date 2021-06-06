@@ -166,7 +166,7 @@ namespace xemmai
 template<>
 struct t_type_of<xemmaix::al::t_source> : t_uninstantiatable<xemmaix::al::t_holds<xemmaix::al::t_source>>
 {
-	static void f_define(t_extension* a_extension);
+	static void f_define(t_library* a_library);
 
 	using t_base::t_base;
 };
@@ -174,7 +174,7 @@ struct t_type_of<xemmaix::al::t_source> : t_uninstantiatable<xemmaix::al::t_hold
 }
 
 template<void (*A_function)(ALsizei, const ALuint*)>
-void xemmaix::al::t_context::f_source_do(xemmai::t_extension* a_extension, t_pvalue* a_stack, size_t a_n)
+void xemmaix::al::t_context::f_source_do(xemmai::t_library* a_library, t_pvalue* a_stack, size_t a_n)
 {
 	f_check<t_context>(*++a_stack, L"context");
 	(*a_stack)->f_as<t_context>().f_make_current();

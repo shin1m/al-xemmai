@@ -21,7 +21,7 @@ t_pvalue t_context::f_create_source()
 	ALuint id;
 	alGenSources(1, &id);
 	t_error::f_check();
-	return f_new<t_source>(session->v_extension, false, this, id);
+	return f_new<t_source>(session->v_library, this, id);
 }
 
 }
@@ -29,9 +29,9 @@ t_pvalue t_context::f_create_source()
 namespace xemmai
 {
 
-void t_type_of<xemmaix::al::t_context>::f_define(t_extension* a_extension)
+void t_type_of<xemmaix::al::t_context>::f_define(t_library* a_library)
 {
-	t_define<t_context, t_object>(a_extension, L"Context"sv)
+	t_define{a_library}
 		(L"destroy"sv, t_member<void(t_context::*)(), &t_context::f_destroy>())
 		(L"process"sv, t_member<void(t_context::*)(), &t_context::f_process>())
 		(L"suspend"sv, t_member<void(t_context::*)(), &t_context::f_suspend>())
@@ -69,7 +69,7 @@ void t_type_of<xemmaix::al::t_context>::f_define(t_extension* a_extension)
 		(L"doppler_velocity"sv, t_member<void(t_context::*)(ALfloat), &t_context::f_doppler_velocity>())
 		(L"speed_of_sound"sv, t_member<void(t_context::*)(ALfloat), &t_context::f_speed_of_sound>())
 		(L"distance_model"sv, t_member<void(t_context::*)(ALenum), &t_context::f_distance_model>())
-	;
+	.f_derive<t_context, t_object>();
 }
 
 }

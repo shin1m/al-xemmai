@@ -226,7 +226,7 @@ public:
 	}
 	t_pvalue f_create_source();
 	template<void (*A_function)(ALsizei, const ALuint*)>
-	static void f_source_do(xemmai::t_extension* a_extension, t_pvalue* a_stack, size_t a_n);
+	static void f_source_do(xemmai::t_library* a_library, t_pvalue* a_stack, size_t a_n);
 	void f_doppler_factor(ALfloat a_value)
 	{
 		f_make_current();
@@ -263,7 +263,7 @@ struct t_type_of<xemmaix::al::t_context> : t_uninstantiatable<xemmaix::al::t_hol
 {
 	typedef xemmaix::al::t_context t_context;
 
-	static void f_define(t_extension* a_extension);
+	static void f_define(t_library* a_library);
 
 	using t_base::t_base;
 };

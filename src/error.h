@@ -41,7 +41,7 @@ struct t_alut_error : t_error
 template<typename T_error>
 inline void f_throw(const ALchar* a_message, ALenum a_error)
 {
-	throw t_rvalue(f_new<T_error>(t_session::f_instance()->v_extension, false, f_convert(a_message), a_error));
+	throw t_rvalue(f_new<T_error>(t_session::f_instance()->v_library, f_convert(a_message), a_error));
 }
 
 }
@@ -50,11 +50,11 @@ namespace xemmai
 {
 
 template<>
-struct t_type_of<xemmaix::al::t_error> : t_uninstantiatable<t_underivable<t_bears<xemmaix::al::t_error, t_type_of<t_throwable>>>>
+struct t_type_of<xemmaix::al::t_error> : t_uninstantiatable<t_bears<xemmaix::al::t_error, t_type_of<t_throwable>>>
 {
-	typedef xemmaix::al::t_extension t_extension;
+	typedef xemmaix::al::t_library t_library;
 
-	static void f_define(t_extension* a_extension);
+	static void f_define(t_library* a_library);
 
 	using t_base::t_base;
 };

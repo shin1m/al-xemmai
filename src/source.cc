@@ -3,10 +3,10 @@
 namespace xemmai
 {
 
-void t_type_of<xemmaix::al::t_source>::f_define(t_extension* a_extension)
+void t_type_of<xemmaix::al::t_source>::f_define(t_library* a_library)
 {
 	using namespace xemmaix::al;
-	t_define<t_source, t_object>(a_extension, L"Source"sv)
+	t_define{a_library}
 		(L"delete"sv, t_member<void(t_source::*)(), &t_source::f_delete>())
 		(L"setf"sv, t_member<void(t_source::*)(ALenum, ALfloat), &t_source::f_setf>())
 		(L"set3f"sv, t_member<void(t_source::*)(ALenum, ALfloat, ALfloat, ALfloat), &t_source::f_set3f>())
@@ -26,7 +26,7 @@ void t_type_of<xemmaix::al::t_source>::f_define(t_extension* a_extension)
 		(L"get_buffer"sv, t_member<t_pvalue(t_source::*)() const, &t_source::f_get_buffer>())
 		(L"queue_buffer"sv, t_member<void(t_source::*)(t_buffer&), &t_source::f_queue_buffer>())
 		(L"unqueue_buffer"sv, t_member<t_pvalue(t_source::*)(), &t_source::f_unqueue_buffer>())
-	;
+	.f_derive<t_source, t_object>();
 }
 
 }

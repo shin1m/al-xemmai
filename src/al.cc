@@ -11,7 +11,7 @@ std::mutex t_session::v_mutex;
 bool t_session::v_running = false;
 XEMMAI__PORTABLE__THREAD t_session* t_session::v_instance;
 
-t_session::t_session(t_extension* a_extension) : v_extension(a_extension)
+t_session::t_session(t_library* a_library) : v_library(a_library)
 {
 	std::unique_lock<std::mutex> lock(v_mutex);
 	if (v_running) xemmai::f_throw(L"main already running."sv);
@@ -33,9 +33,9 @@ t_session::~t_session()
 namespace
 {
 
-void f_main(t_extension* a_extension, const t_pvalue& a_callable)
+void f_main(t_library* a_library, const t_pvalue& a_callable)
 {
-	t_session session(a_extension);
+	t_session session(a_library);
 	a_callable();
 }
 
@@ -62,130 +62,7 @@ t_pvalue f_alc_get_strings(ALCenum a_parameter)
 
 }
 
-t_extension::t_extension(t_object* a_module) : xemmai::t_extension(a_module)
-{
-	t_type_of<t_error>::f_define(this);
-	t_type_of<t_base_device>::f_define(this);
-	t_type_of<t_device>::f_define(this);
-	t_type_of<t_capture_device>::f_define(this);
-	t_type_of<t_context>::f_define(this);
-	t_type_of<t_source>::f_define(this);
-	t_type_of<t_buffer>::f_define(this);
-	f_define<void(*)(t_extension*, const t_pvalue&), f_main>(this, L"main"sv);
-	f_define<t_pvalue(*)(ALCenum), f_alc_get_string>(this, L"alc_get_string"sv);
-	f_define<t_pvalue(*)(ALCenum), f_alc_get_strings>(this, L"alc_get_strings"sv);
-	a_module->f_put(t_symbol::f_instantiate(L"SOURCE_RELATIVE"sv), f_as(AL_SOURCE_RELATIVE));
-	a_module->f_put(t_symbol::f_instantiate(L"CONE_INNER_ANGLE"sv), f_as(AL_CONE_INNER_ANGLE));
-	a_module->f_put(t_symbol::f_instantiate(L"CONE_OUTER_ANGLE"sv), f_as(AL_CONE_OUTER_ANGLE));
-	a_module->f_put(t_symbol::f_instantiate(L"PITCH"sv), f_as(AL_PITCH));
-	a_module->f_put(t_symbol::f_instantiate(L"POSITION"sv), f_as(AL_POSITION));
-	a_module->f_put(t_symbol::f_instantiate(L"DIRECTION"sv), f_as(AL_DIRECTION));
-	a_module->f_put(t_symbol::f_instantiate(L"VELOCITY"sv), f_as(AL_VELOCITY));
-	a_module->f_put(t_symbol::f_instantiate(L"LOOPING"sv), f_as(AL_LOOPING));
-	a_module->f_put(t_symbol::f_instantiate(L"BUFFER"sv), f_as(AL_BUFFER));
-	a_module->f_put(t_symbol::f_instantiate(L"GAIN"sv), f_as(AL_GAIN));
-	a_module->f_put(t_symbol::f_instantiate(L"MIN_GAIN"sv), f_as(AL_MIN_GAIN));
-	a_module->f_put(t_symbol::f_instantiate(L"MAX_GAIN"sv), f_as(AL_MAX_GAIN));
-	a_module->f_put(t_symbol::f_instantiate(L"ORIENTATION"sv), f_as(AL_ORIENTATION));
-	a_module->f_put(t_symbol::f_instantiate(L"SOURCE_STATE"sv), f_as(AL_SOURCE_STATE));
-	a_module->f_put(t_symbol::f_instantiate(L"INITIAL"sv), f_as(AL_INITIAL));
-	a_module->f_put(t_symbol::f_instantiate(L"PLAYING"sv), f_as(AL_PLAYING));
-	a_module->f_put(t_symbol::f_instantiate(L"PAUSED"sv), f_as(AL_PAUSED));
-	a_module->f_put(t_symbol::f_instantiate(L"STOPPED"sv), f_as(AL_STOPPED));
-	a_module->f_put(t_symbol::f_instantiate(L"BUFFERS_QUEUED"sv), f_as(AL_BUFFERS_QUEUED));
-	a_module->f_put(t_symbol::f_instantiate(L"BUFFERS_PROCESSED"sv), f_as(AL_BUFFERS_PROCESSED));
-	a_module->f_put(t_symbol::f_instantiate(L"SEC_OFFSET"sv), f_as(AL_SEC_OFFSET));
-	a_module->f_put(t_symbol::f_instantiate(L"SAMPLE_OFFSET"sv), f_as(AL_SAMPLE_OFFSET));
-	a_module->f_put(t_symbol::f_instantiate(L"BYTE_OFFSET"sv), f_as(AL_BYTE_OFFSET));
-	a_module->f_put(t_symbol::f_instantiate(L"SOURCE_TYPE"sv), f_as(AL_SOURCE_TYPE));
-	a_module->f_put(t_symbol::f_instantiate(L"STATIC"sv), f_as(AL_STATIC));
-	a_module->f_put(t_symbol::f_instantiate(L"STREAMING"sv), f_as(AL_STREAMING));
-	a_module->f_put(t_symbol::f_instantiate(L"UNDETERMINED"sv), f_as(AL_UNDETERMINED));
-	a_module->f_put(t_symbol::f_instantiate(L"FORMAT_MONO8"sv), f_as(AL_FORMAT_MONO8));
-	a_module->f_put(t_symbol::f_instantiate(L"FORMAT_MONO16"sv), f_as(AL_FORMAT_MONO16));
-	a_module->f_put(t_symbol::f_instantiate(L"FORMAT_STEREO8"sv), f_as(AL_FORMAT_STEREO8));
-	a_module->f_put(t_symbol::f_instantiate(L"FORMAT_STEREO16"sv), f_as(AL_FORMAT_STEREO16));
-	a_module->f_put(t_symbol::f_instantiate(L"REFERENCE_DISTANCE"sv), f_as(AL_REFERENCE_DISTANCE));
-	a_module->f_put(t_symbol::f_instantiate(L"ROLLOFF_FACTOR"sv), f_as(AL_ROLLOFF_FACTOR));
-	a_module->f_put(t_symbol::f_instantiate(L"CONE_OUTER_GAIN"sv), f_as(AL_CONE_OUTER_GAIN));
-	a_module->f_put(t_symbol::f_instantiate(L"MAX_DISTANCE"sv), f_as(AL_MAX_DISTANCE));
-	a_module->f_put(t_symbol::f_instantiate(L"FREQUENCY"sv), f_as(AL_FREQUENCY));
-	a_module->f_put(t_symbol::f_instantiate(L"BITS"sv), f_as(AL_BITS));
-	a_module->f_put(t_symbol::f_instantiate(L"CHANNELS"sv), f_as(AL_CHANNELS));
-	a_module->f_put(t_symbol::f_instantiate(L"SIZE"sv), f_as(AL_SIZE));
-	a_module->f_put(t_symbol::f_instantiate(L"UNUSED"sv), f_as(AL_UNUSED));
-	a_module->f_put(t_symbol::f_instantiate(L"PENDING"sv), f_as(AL_PENDING));
-	a_module->f_put(t_symbol::f_instantiate(L"PROCESSED"sv), f_as(AL_PROCESSED));
-	a_module->f_put(t_symbol::f_instantiate(L"NO_ERROR"sv), f_as(AL_NO_ERROR));
-	a_module->f_put(t_symbol::f_instantiate(L"INVALID_NAME"sv), f_as(AL_INVALID_NAME));
-	a_module->f_put(t_symbol::f_instantiate(L"INVALID_ENUM"sv), f_as(AL_INVALID_ENUM));
-	a_module->f_put(t_symbol::f_instantiate(L"INVALID_VALUE"sv), f_as(AL_INVALID_VALUE));
-	a_module->f_put(t_symbol::f_instantiate(L"INVALID_OPERATION"sv), f_as(AL_INVALID_OPERATION));
-	a_module->f_put(t_symbol::f_instantiate(L"OUT_OF_MEMORY"sv), f_as(AL_OUT_OF_MEMORY));
-	a_module->f_put(t_symbol::f_instantiate(L"VENDOR"sv), f_as(AL_VENDOR));
-	a_module->f_put(t_symbol::f_instantiate(L"VERSION"sv), f_as(AL_VERSION));
-	a_module->f_put(t_symbol::f_instantiate(L"RENDERER"sv), f_as(AL_RENDERER));
-	a_module->f_put(t_symbol::f_instantiate(L"EXTENSIONS"sv), f_as(AL_EXTENSIONS));
-	a_module->f_put(t_symbol::f_instantiate(L"DOPPLER_FACTOR"sv), f_as(AL_DOPPLER_FACTOR));
-	a_module->f_put(t_symbol::f_instantiate(L"DOPPLER_VELOCITY"sv), f_as(AL_DOPPLER_VELOCITY));
-	a_module->f_put(t_symbol::f_instantiate(L"SPEED_OF_SOUND"sv), f_as(AL_SPEED_OF_SOUND));
-	a_module->f_put(t_symbol::f_instantiate(L"DISTANCE_MODEL"sv), f_as(AL_DISTANCE_MODEL));
-	a_module->f_put(t_symbol::f_instantiate(L"INVERSE_DISTANCE"sv), f_as(AL_INVERSE_DISTANCE));
-	a_module->f_put(t_symbol::f_instantiate(L"INVERSE_DISTANCE_CLAMPED"sv), f_as(AL_INVERSE_DISTANCE_CLAMPED));
-	a_module->f_put(t_symbol::f_instantiate(L"LINEAR_DISTANCE"sv), f_as(AL_LINEAR_DISTANCE));
-	a_module->f_put(t_symbol::f_instantiate(L"LINEAR_DISTANCE_CLAMPED"sv), f_as(AL_LINEAR_DISTANCE_CLAMPED));
-	a_module->f_put(t_symbol::f_instantiate(L"EXPONENT_DISTANCE"sv), f_as(AL_EXPONENT_DISTANCE));
-	a_module->f_put(t_symbol::f_instantiate(L"EXPONENT_DISTANCE_CLAMPED"sv), f_as(AL_EXPONENT_DISTANCE_CLAMPED));
-	a_module->f_put(t_symbol::f_instantiate(L"ALC_FREQUENCY"sv), f_as(ALC_FREQUENCY));
-	a_module->f_put(t_symbol::f_instantiate(L"ALC_REFRESH"sv), f_as(ALC_REFRESH));
-	a_module->f_put(t_symbol::f_instantiate(L"ALC_SYNC"sv), f_as(ALC_SYNC));
-	a_module->f_put(t_symbol::f_instantiate(L"ALC_MONO_SOURCES"sv), f_as(ALC_MONO_SOURCES));
-	a_module->f_put(t_symbol::f_instantiate(L"ALC_STEREO_SOURCES"sv), f_as(ALC_STEREO_SOURCES));
-	a_module->f_put(t_symbol::f_instantiate(L"ALC_NO_ERROR"sv), f_as(ALC_NO_ERROR));
-	a_module->f_put(t_symbol::f_instantiate(L"ALC_INVALID_DEVICE"sv), f_as(ALC_INVALID_DEVICE));
-	a_module->f_put(t_symbol::f_instantiate(L"ALC_INVALID_CONTEXT"sv), f_as(ALC_INVALID_CONTEXT));
-	a_module->f_put(t_symbol::f_instantiate(L"ALC_INVALID_ENUM"sv), f_as(ALC_INVALID_ENUM));
-	a_module->f_put(t_symbol::f_instantiate(L"ALC_INVALID_VALUE"sv), f_as(ALC_INVALID_VALUE));
-	a_module->f_put(t_symbol::f_instantiate(L"ALC_OUT_OF_MEMORY"sv), f_as(ALC_OUT_OF_MEMORY));
-	a_module->f_put(t_symbol::f_instantiate(L"ALC_DEFAULT_DEVICE_SPECIFIER"sv), f_as(ALC_DEFAULT_DEVICE_SPECIFIER));
-	a_module->f_put(t_symbol::f_instantiate(L"ALC_DEVICE_SPECIFIER"sv), f_as(ALC_DEVICE_SPECIFIER));
-	a_module->f_put(t_symbol::f_instantiate(L"ALC_EXTENSIONS"sv), f_as(ALC_EXTENSIONS));
-	a_module->f_put(t_symbol::f_instantiate(L"ALC_MAJOR_VERSION"sv), f_as(ALC_MAJOR_VERSION));
-	a_module->f_put(t_symbol::f_instantiate(L"ALC_MINOR_VERSION"sv), f_as(ALC_MINOR_VERSION));
-	a_module->f_put(t_symbol::f_instantiate(L"ALC_ATTRIBUTES_SIZE"sv), f_as(ALC_ATTRIBUTES_SIZE));
-	a_module->f_put(t_symbol::f_instantiate(L"ALC_ALL_ATTRIBUTES"sv), f_as(ALC_ALL_ATTRIBUTES));
-	a_module->f_put(t_symbol::f_instantiate(L"ALC_CAPTURE_DEVICE_SPECIFIER"sv), f_as(ALC_CAPTURE_DEVICE_SPECIFIER));
-	a_module->f_put(t_symbol::f_instantiate(L"ALC_CAPTURE_DEFAULT_DEVICE_SPECIFIER"sv), f_as(ALC_CAPTURE_DEFAULT_DEVICE_SPECIFIER));
-	a_module->f_put(t_symbol::f_instantiate(L"ALC_CAPTURE_SAMPLES"sv), f_as(ALC_CAPTURE_SAMPLES));
-	a_module->f_put(t_symbol::f_instantiate(L"ALUT_ERROR_NO_ERROR"sv), f_as(ALUT_ERROR_NO_ERROR));
-	a_module->f_put(t_symbol::f_instantiate(L"ALUT_ERROR_OUT_OF_MEMORY"sv), f_as(ALUT_ERROR_OUT_OF_MEMORY));
-	a_module->f_put(t_symbol::f_instantiate(L"ALUT_ERROR_INVALID_ENUM"sv), f_as(ALUT_ERROR_INVALID_ENUM));
-	a_module->f_put(t_symbol::f_instantiate(L"ALUT_ERROR_INVALID_VALUE"sv), f_as(ALUT_ERROR_INVALID_VALUE));
-	a_module->f_put(t_symbol::f_instantiate(L"ALUT_ERROR_INVALID_OPERATION"sv), f_as(ALUT_ERROR_INVALID_OPERATION));
-	a_module->f_put(t_symbol::f_instantiate(L"ALUT_ERROR_NO_CURRENT_CONTEXT"sv), f_as(ALUT_ERROR_NO_CURRENT_CONTEXT));
-	a_module->f_put(t_symbol::f_instantiate(L"ALUT_ERROR_AL_ERROR_ON_ENTRY"sv), f_as(ALUT_ERROR_AL_ERROR_ON_ENTRY));
-	a_module->f_put(t_symbol::f_instantiate(L"ALUT_ERROR_ALC_ERROR_ON_ENTRY"sv), f_as(ALUT_ERROR_ALC_ERROR_ON_ENTRY));
-	a_module->f_put(t_symbol::f_instantiate(L"ALUT_ERROR_OPEN_DEVICE"sv), f_as(ALUT_ERROR_OPEN_DEVICE));
-	a_module->f_put(t_symbol::f_instantiate(L"ALUT_ERROR_CLOSE_DEVICE"sv), f_as(ALUT_ERROR_CLOSE_DEVICE));
-	a_module->f_put(t_symbol::f_instantiate(L"ALUT_ERROR_CREATE_CONTEXT"sv), f_as(ALUT_ERROR_CREATE_CONTEXT));
-	a_module->f_put(t_symbol::f_instantiate(L"ALUT_ERROR_MAKE_CONTEXT_CURRENT"sv), f_as(ALUT_ERROR_MAKE_CONTEXT_CURRENT));
-	a_module->f_put(t_symbol::f_instantiate(L"ALUT_ERROR_DESTROY_CONTEXT"sv), f_as(ALUT_ERROR_DESTROY_CONTEXT));
-	a_module->f_put(t_symbol::f_instantiate(L"ALUT_ERROR_GEN_BUFFERS"sv), f_as(ALUT_ERROR_GEN_BUFFERS));
-	a_module->f_put(t_symbol::f_instantiate(L"ALUT_ERROR_BUFFER_DATA"sv), f_as(ALUT_ERROR_BUFFER_DATA));
-	a_module->f_put(t_symbol::f_instantiate(L"ALUT_ERROR_IO_ERROR"sv), f_as(ALUT_ERROR_IO_ERROR));
-	a_module->f_put(t_symbol::f_instantiate(L"ALUT_ERROR_UNSUPPORTED_FILE_TYPE"sv), f_as(ALUT_ERROR_UNSUPPORTED_FILE_TYPE));
-	a_module->f_put(t_symbol::f_instantiate(L"ALUT_ERROR_UNSUPPORTED_FILE_SUBTYPE"sv), f_as(ALUT_ERROR_UNSUPPORTED_FILE_SUBTYPE));
-	a_module->f_put(t_symbol::f_instantiate(L"ALUT_ERROR_CORRUPT_OR_TRUNCATED_DATA"sv), f_as(ALUT_ERROR_CORRUPT_OR_TRUNCATED_DATA));
-	a_module->f_put(t_symbol::f_instantiate(L"ALUT_WAVEFORM_SINE"sv), f_as(ALUT_WAVEFORM_SINE));
-	a_module->f_put(t_symbol::f_instantiate(L"ALUT_WAVEFORM_SQUARE"sv), f_as(ALUT_WAVEFORM_SQUARE));
-	a_module->f_put(t_symbol::f_instantiate(L"ALUT_WAVEFORM_SAWTOOTH"sv), f_as(ALUT_WAVEFORM_SAWTOOTH));
-	a_module->f_put(t_symbol::f_instantiate(L"ALUT_WAVEFORM_WHITENOISE"sv), f_as(ALUT_WAVEFORM_WHITENOISE));
-	a_module->f_put(t_symbol::f_instantiate(L"ALUT_WAVEFORM_IMPULSE"sv), f_as(ALUT_WAVEFORM_IMPULSE));
-	a_module->f_put(t_symbol::f_instantiate(L"ALUT_LOADER_BUFFER"sv), f_as(ALUT_LOADER_BUFFER));
-	a_module->f_put(t_symbol::f_instantiate(L"ALUT_LOADER_MEMORY"sv), f_as(ALUT_LOADER_MEMORY));
-}
-
-void t_extension::f_scan(t_scan a_scan)
+void t_library::f_scan(t_scan a_scan)
 {
 	a_scan(v_type_error);
 	a_scan(v_type_alc_error);
@@ -198,9 +75,141 @@ void t_extension::f_scan(t_scan a_scan)
 	a_scan(v_type_buffer);
 }
 
+std::vector<std::pair<t_root, t_rvalue>> t_library::f_define()
+{
+	t_type_of<t_error>::f_define(this);
+	t_type_of<t_base_device>::f_define(this);
+	t_type_of<t_device>::f_define(this);
+	t_type_of<t_capture_device>::f_define(this);
+	t_type_of<t_context>::f_define(this);
+	t_type_of<t_source>::f_define(this);
+	t_type_of<t_buffer>::f_define(this);
+	return t_define(this)
+		(L"Error"sv, t_object::f_of(v_type_error))
+		(L"BaseDevice"sv, t_object::f_of(v_type_base_device))
+		(L"Device"sv, t_object::f_of(v_type_device))
+		(L"CaptureDevice"sv, t_object::f_of(v_type_capture_device))
+		(L"Context"sv, t_object::f_of(v_type_context))
+		(L"Source"sv, t_object::f_of(v_type_source))
+		(L"Buffer"sv, t_object::f_of(v_type_buffer))
+		(L"main"sv, t_static<void(*)(t_library*, const t_pvalue&), f_main>())
+		(L"alc_get_string"sv, t_static<t_pvalue(*)(ALCenum), f_alc_get_string>())
+		(L"alc_get_strings"sv, t_static<t_pvalue(*)(ALCenum), f_alc_get_strings>())
+		(L"SOURCE_RELATIVE"sv, AL_SOURCE_RELATIVE)
+		(L"CONE_INNER_ANGLE"sv, AL_CONE_INNER_ANGLE)
+		(L"CONE_OUTER_ANGLE"sv, AL_CONE_OUTER_ANGLE)
+		(L"PITCH"sv, AL_PITCH)
+		(L"POSITION"sv, AL_POSITION)
+		(L"DIRECTION"sv, AL_DIRECTION)
+		(L"VELOCITY"sv, AL_VELOCITY)
+		(L"LOOPING"sv, AL_LOOPING)
+		(L"BUFFER"sv, AL_BUFFER)
+		(L"GAIN"sv, AL_GAIN)
+		(L"MIN_GAIN"sv, AL_MIN_GAIN)
+		(L"MAX_GAIN"sv, AL_MAX_GAIN)
+		(L"ORIENTATION"sv, AL_ORIENTATION)
+		(L"SOURCE_STATE"sv, AL_SOURCE_STATE)
+		(L"INITIAL"sv, AL_INITIAL)
+		(L"PLAYING"sv, AL_PLAYING)
+		(L"PAUSED"sv, AL_PAUSED)
+		(L"STOPPED"sv, AL_STOPPED)
+		(L"BUFFERS_QUEUED"sv, AL_BUFFERS_QUEUED)
+		(L"BUFFERS_PROCESSED"sv, AL_BUFFERS_PROCESSED)
+		(L"SEC_OFFSET"sv, AL_SEC_OFFSET)
+		(L"SAMPLE_OFFSET"sv, AL_SAMPLE_OFFSET)
+		(L"BYTE_OFFSET"sv, AL_BYTE_OFFSET)
+		(L"SOURCE_TYPE"sv, AL_SOURCE_TYPE)
+		(L"STATIC"sv, AL_STATIC)
+		(L"STREAMING"sv, AL_STREAMING)
+		(L"UNDETERMINED"sv, AL_UNDETERMINED)
+		(L"FORMAT_MONO8"sv, AL_FORMAT_MONO8)
+		(L"FORMAT_MONO16"sv, AL_FORMAT_MONO16)
+		(L"FORMAT_STEREO8"sv, AL_FORMAT_STEREO8)
+		(L"FORMAT_STEREO16"sv, AL_FORMAT_STEREO16)
+		(L"REFERENCE_DISTANCE"sv, AL_REFERENCE_DISTANCE)
+		(L"ROLLOFF_FACTOR"sv, AL_ROLLOFF_FACTOR)
+		(L"CONE_OUTER_GAIN"sv, AL_CONE_OUTER_GAIN)
+		(L"MAX_DISTANCE"sv, AL_MAX_DISTANCE)
+		(L"FREQUENCY"sv, AL_FREQUENCY)
+		(L"BITS"sv, AL_BITS)
+		(L"CHANNELS"sv, AL_CHANNELS)
+		(L"SIZE"sv, AL_SIZE)
+		(L"UNUSED"sv, AL_UNUSED)
+		(L"PENDING"sv, AL_PENDING)
+		(L"PROCESSED"sv, AL_PROCESSED)
+		(L"NO_ERROR"sv, AL_NO_ERROR)
+		(L"INVALID_NAME"sv, AL_INVALID_NAME)
+		(L"INVALID_ENUM"sv, AL_INVALID_ENUM)
+		(L"INVALID_VALUE"sv, AL_INVALID_VALUE)
+		(L"INVALID_OPERATION"sv, AL_INVALID_OPERATION)
+		(L"OUT_OF_MEMORY"sv, AL_OUT_OF_MEMORY)
+		(L"VENDOR"sv, AL_VENDOR)
+		(L"VERSION"sv, AL_VERSION)
+		(L"RENDERER"sv, AL_RENDERER)
+		(L"EXTENSIONS"sv, AL_EXTENSIONS)
+		(L"DOPPLER_FACTOR"sv, AL_DOPPLER_FACTOR)
+		(L"DOPPLER_VELOCITY"sv, AL_DOPPLER_VELOCITY)
+		(L"SPEED_OF_SOUND"sv, AL_SPEED_OF_SOUND)
+		(L"DISTANCE_MODEL"sv, AL_DISTANCE_MODEL)
+		(L"INVERSE_DISTANCE"sv, AL_INVERSE_DISTANCE)
+		(L"INVERSE_DISTANCE_CLAMPED"sv, AL_INVERSE_DISTANCE_CLAMPED)
+		(L"LINEAR_DISTANCE"sv, AL_LINEAR_DISTANCE)
+		(L"LINEAR_DISTANCE_CLAMPED"sv, AL_LINEAR_DISTANCE_CLAMPED)
+		(L"EXPONENT_DISTANCE"sv, AL_EXPONENT_DISTANCE)
+		(L"EXPONENT_DISTANCE_CLAMPED"sv, AL_EXPONENT_DISTANCE_CLAMPED)
+		(L"ALC_FREQUENCY"sv, ALC_FREQUENCY)
+		(L"ALC_REFRESH"sv, ALC_REFRESH)
+		(L"ALC_SYNC"sv, ALC_SYNC)
+		(L"ALC_MONO_SOURCES"sv, ALC_MONO_SOURCES)
+		(L"ALC_STEREO_SOURCES"sv, ALC_STEREO_SOURCES)
+		(L"ALC_NO_ERROR"sv, ALC_NO_ERROR)
+		(L"ALC_INVALID_DEVICE"sv, ALC_INVALID_DEVICE)
+		(L"ALC_INVALID_CONTEXT"sv, ALC_INVALID_CONTEXT)
+		(L"ALC_INVALID_ENUM"sv, ALC_INVALID_ENUM)
+		(L"ALC_INVALID_VALUE"sv, ALC_INVALID_VALUE)
+		(L"ALC_OUT_OF_MEMORY"sv, ALC_OUT_OF_MEMORY)
+		(L"ALC_DEFAULT_DEVICE_SPECIFIER"sv, ALC_DEFAULT_DEVICE_SPECIFIER)
+		(L"ALC_DEVICE_SPECIFIER"sv, ALC_DEVICE_SPECIFIER)
+		(L"ALC_EXTENSIONS"sv, ALC_EXTENSIONS)
+		(L"ALC_MAJOR_VERSION"sv, ALC_MAJOR_VERSION)
+		(L"ALC_MINOR_VERSION"sv, ALC_MINOR_VERSION)
+		(L"ALC_ATTRIBUTES_SIZE"sv, ALC_ATTRIBUTES_SIZE)
+		(L"ALC_ALL_ATTRIBUTES"sv, ALC_ALL_ATTRIBUTES)
+		(L"ALC_CAPTURE_DEVICE_SPECIFIER"sv, ALC_CAPTURE_DEVICE_SPECIFIER)
+		(L"ALC_CAPTURE_DEFAULT_DEVICE_SPECIFIER"sv, ALC_CAPTURE_DEFAULT_DEVICE_SPECIFIER)
+		(L"ALC_CAPTURE_SAMPLES"sv, ALC_CAPTURE_SAMPLES)
+		(L"ALUT_ERROR_NO_ERROR"sv, ALUT_ERROR_NO_ERROR)
+		(L"ALUT_ERROR_OUT_OF_MEMORY"sv, ALUT_ERROR_OUT_OF_MEMORY)
+		(L"ALUT_ERROR_INVALID_ENUM"sv, ALUT_ERROR_INVALID_ENUM)
+		(L"ALUT_ERROR_INVALID_VALUE"sv, ALUT_ERROR_INVALID_VALUE)
+		(L"ALUT_ERROR_INVALID_OPERATION"sv, ALUT_ERROR_INVALID_OPERATION)
+		(L"ALUT_ERROR_NO_CURRENT_CONTEXT"sv, ALUT_ERROR_NO_CURRENT_CONTEXT)
+		(L"ALUT_ERROR_AL_ERROR_ON_ENTRY"sv, ALUT_ERROR_AL_ERROR_ON_ENTRY)
+		(L"ALUT_ERROR_ALC_ERROR_ON_ENTRY"sv, ALUT_ERROR_ALC_ERROR_ON_ENTRY)
+		(L"ALUT_ERROR_OPEN_DEVICE"sv, ALUT_ERROR_OPEN_DEVICE)
+		(L"ALUT_ERROR_CLOSE_DEVICE"sv, ALUT_ERROR_CLOSE_DEVICE)
+		(L"ALUT_ERROR_CREATE_CONTEXT"sv, ALUT_ERROR_CREATE_CONTEXT)
+		(L"ALUT_ERROR_MAKE_CONTEXT_CURRENT"sv, ALUT_ERROR_MAKE_CONTEXT_CURRENT)
+		(L"ALUT_ERROR_DESTROY_CONTEXT"sv, ALUT_ERROR_DESTROY_CONTEXT)
+		(L"ALUT_ERROR_GEN_BUFFERS"sv, ALUT_ERROR_GEN_BUFFERS)
+		(L"ALUT_ERROR_BUFFER_DATA"sv, ALUT_ERROR_BUFFER_DATA)
+		(L"ALUT_ERROR_IO_ERROR"sv, ALUT_ERROR_IO_ERROR)
+		(L"ALUT_ERROR_UNSUPPORTED_FILE_TYPE"sv, ALUT_ERROR_UNSUPPORTED_FILE_TYPE)
+		(L"ALUT_ERROR_UNSUPPORTED_FILE_SUBTYPE"sv, ALUT_ERROR_UNSUPPORTED_FILE_SUBTYPE)
+		(L"ALUT_ERROR_CORRUPT_OR_TRUNCATED_DATA"sv, ALUT_ERROR_CORRUPT_OR_TRUNCATED_DATA)
+		(L"ALUT_WAVEFORM_SINE"sv, ALUT_WAVEFORM_SINE)
+		(L"ALUT_WAVEFORM_SQUARE"sv, ALUT_WAVEFORM_SQUARE)
+		(L"ALUT_WAVEFORM_SAWTOOTH"sv, ALUT_WAVEFORM_SAWTOOTH)
+		(L"ALUT_WAVEFORM_WHITENOISE"sv, ALUT_WAVEFORM_WHITENOISE)
+		(L"ALUT_WAVEFORM_IMPULSE"sv, ALUT_WAVEFORM_IMPULSE)
+		(L"ALUT_LOADER_BUFFER"sv, ALUT_LOADER_BUFFER)
+		(L"ALUT_LOADER_MEMORY"sv, ALUT_LOADER_MEMORY)
+	;
 }
 
-XEMMAI__MODULE__FACTORY(xemmai::t_object* a_module)
+}
+
+XEMMAI__MODULE__FACTORY(xemmai::t_library::t_handle* a_handle)
 {
-	return new xemmaix::al::t_extension(a_module);
+	return xemmai::f_new<xemmaix::al::t_library>(a_handle);
 }

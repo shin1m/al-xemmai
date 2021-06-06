@@ -13,7 +13,7 @@ namespace xemmaix::al
 using namespace xemmai;
 using namespace xemmai::portable;
 
-class t_extension;
+class t_library;
 class t_error;
 struct t_alc_error;
 struct t_alut_error;
@@ -39,7 +39,7 @@ class t_session
 	static bool v_running;
 	static XEMMAI__PORTABLE__THREAD t_session* v_instance;
 
-	t_extension* v_extension;
+	t_library* v_library;
 	std::map<ALCdevice*, t_root> v_devices;
 	std::map<ALCdevice*, t_root> v_capture_devices;
 
@@ -50,15 +50,15 @@ public:
 		return v_instance;
 	}
 
-	t_session(t_extension* a_extension);
+	t_session(t_library* a_library);
 	~t_session();
-	t_extension* f_extension() const
+	t_library* f_library() const
 	{
-		return v_extension;
+		return v_library;
 	}
 };
 
-class t_extension : public xemmai::t_extension
+class t_library : public xemmai::t_library
 {
 	t_slot_of<t_type> v_type_error;
 	t_slot_of<t_type> v_type_alc_error;
@@ -71,10 +71,11 @@ class t_extension : public xemmai::t_extension
 	t_slot_of<t_type> v_type_buffer;
 
 public:
-	t_extension(t_object* a_module);
+	using xemmai::t_library::t_library;
 	virtual void f_scan(t_scan a_scan);
+	virtual std::vector<std::pair<t_root, t_rvalue>> f_define();
 	template<typename T>
-	const T* f_extension() const
+	const T* f_library() const
 	{
 		return f_global();
 	}
@@ -86,78 +87,34 @@ public:
 	template<typename T>
 	t_type* f_type() const
 	{
-		return const_cast<t_extension*>(this)->f_type_slot<T>();
+		return const_cast<t_library*>(this)->f_type_slot<T>();
 	}
 	template<typename T>
 	t_pvalue f_as(T&& a_value) const
 	{
 		typedef t_type_of<typename t_fundamental<T>::t_type> t;
-		return t::f_transfer(f_extension<typename t::t_extension>(), std::forward<T>(a_value));
+		return t::f_transfer(f_library<typename t::t_library>(), std::forward<T>(a_value));
 	}
 };
 
 template<>
-inline const t_extension* t_extension::f_extension<t_extension>() const
+inline const t_library* t_library::f_library<t_library>() const
 {
 	return this;
 }
 
-template<>
-inline t_slot_of<t_type>& t_extension::f_type_slot<t_error>()
-{
-	return v_type_error;
-}
-
-template<>
-inline t_slot_of<t_type>& t_extension::f_type_slot<t_alc_error>()
-{
-	return v_type_alc_error;
-}
-
-template<>
-inline t_slot_of<t_type>& t_extension::f_type_slot<t_alut_error>()
-{
-	return v_type_alut_error;
-}
-
-template<>
-inline t_slot_of<t_type>& t_extension::f_type_slot<t_base_device>()
-{
-	return v_type_base_device;
-}
-
-template<>
-inline t_slot_of<t_type>& t_extension::f_type_slot<t_device>()
-{
-	return v_type_device;
-}
-
-template<>
-inline t_slot_of<t_type>& t_extension::f_type_slot<t_capture_device>()
-{
-	return v_type_capture_device;
-}
-
-template<>
-inline t_slot_of<t_type>& t_extension::f_type_slot<t_context>()
-{
-	return v_type_context;
-}
-
-template<>
-inline t_slot_of<t_type>& t_extension::f_type_slot<t_source>()
-{
-	return v_type_source;
-}
-
-template<>
-inline t_slot_of<t_type>& t_extension::f_type_slot<t_buffer>()
-{
-	return v_type_buffer;
-}
+XEMMAI__LIBRARY__TYPE(t_library, error)
+XEMMAI__LIBRARY__TYPE(t_library, alc_error)
+XEMMAI__LIBRARY__TYPE(t_library, alut_error)
+XEMMAI__LIBRARY__TYPE(t_library, base_device)
+XEMMAI__LIBRARY__TYPE(t_library, device)
+XEMMAI__LIBRARY__TYPE(t_library, capture_device)
+XEMMAI__LIBRARY__TYPE(t_library, context)
+XEMMAI__LIBRARY__TYPE(t_library, source)
+XEMMAI__LIBRARY__TYPE(t_library, buffer)
 
 template<typename T>
-struct t_holds : t_underivable<t_bears<T>>
+struct t_holds : t_bears<T>
 {
 	template<typename T0>
 	struct t_cast
@@ -218,10 +175,10 @@ struct t_holds : t_underivable<t_bears<T>>
 			}
 		}
 	};
-	typedef xemmaix::al::t_extension t_extension;
+	typedef xemmaix::al::t_library t_library;
 	typedef t_holds t_base;
 
-	using t_underivable<t_bears<T>>::t_underivable;
+	using t_bears<T>::t_bears;
 	static void f_do_finalize(t_object* a_this)
 	{
 		auto& p = a_this->f_as<T>();

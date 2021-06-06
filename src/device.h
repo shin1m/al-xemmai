@@ -60,7 +60,7 @@ public:
 			alcCloseDevice(device);
 			xemmai::f_throw(L"alcCreateContext failed."sv);
 		}
-		return a_class->f_new<t_device>(false, session, device, context);
+		return a_class->f_new<t_device>(session, device, context);
 	}
 
 	void f_close();
@@ -129,7 +129,7 @@ public:
 		auto session = t_session::f_instance();
 		ALCdevice* device = alcCaptureOpenDevice(a_name ? f_convert(*a_name).c_str() : NULL, a_frequency, a_format, a_buffer);
 		if (device == NULL) xemmai::f_throw(L"alcCaptureOpenDevice failed."sv);
-		return a_class->f_new<t_capture_device>(false, session, device);
+		return a_class->f_new<t_capture_device>(session, device);
 	}
 
 	void f_close();
@@ -159,7 +159,7 @@ namespace xemmai
 template<>
 struct t_type_of<xemmaix::al::t_base_device> : xemmaix::al::t_holds<xemmaix::al::t_base_device>
 {
-	static void f_define(t_extension* a_extension);
+	static void f_define(t_library* a_library);
 
 	using t_base::t_base;
 	t_pvalue f_do_construct(t_pvalue* a_stack, size_t a_n);
@@ -169,7 +169,7 @@ struct t_type_of<xemmaix::al::t_base_device> : xemmaix::al::t_holds<xemmaix::al:
 template<>
 struct t_type_of<xemmaix::al::t_device> : t_bears<xemmaix::al::t_device, t_type_of<xemmaix::al::t_base_device>>
 {
-	static void f_define(t_extension* a_extension);
+	static void f_define(t_library* a_library);
 
 	using t_base::t_base;
 	t_pvalue f_do_construct(t_pvalue* a_stack, size_t a_n);
@@ -178,7 +178,7 @@ struct t_type_of<xemmaix::al::t_device> : t_bears<xemmaix::al::t_device, t_type_
 template<>
 struct t_type_of<xemmaix::al::t_capture_device> : t_bears<xemmaix::al::t_capture_device, t_type_of<xemmaix::al::t_base_device>>
 {
-	static void f_define(t_extension* a_extension);
+	static void f_define(t_library* a_library);
 
 	using t_base::t_base;
 	t_pvalue f_do_construct(t_pvalue* a_stack, size_t a_n);
