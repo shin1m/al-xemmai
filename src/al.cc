@@ -7,16 +7,13 @@ namespace xemmaix::al
 
 using namespace xemmai;
 
-std::mutex t_session::v_mutex;
-bool t_session::v_running = false;
+std::atomic_flag t_session::v_running = ATOMIC_FLAG_INIT;
 XEMMAI__PORTABLE__THREAD t_session* t_session::v_instance;
 
 t_session::t_session(t_library* a_library) : v_library(a_library)
 {
-	std::unique_lock<std::mutex> lock(v_mutex);
-	if (v_running) xemmai::f_throw(L"main already running."sv);
+	if (v_running.test_and_set(std::memory_order_acquire)) xemmai::f_throw(L"main already running."sv);
 	if (alutInitWithoutContext(NULL, NULL) != AL_TRUE) xemmai::f_throw(L"alutInitWithoutContext failed."sv);
-	v_running = true;
 	v_instance = this;
 }
 
@@ -24,10 +21,9 @@ t_session::~t_session()
 {
 	while (!v_devices.empty()) v_devices.begin()->second->f_as<t_device>().f_close();
 	while (!v_capture_devices.empty()) v_capture_devices.begin()->second->f_as<t_capture_device>().f_close();
-	std::unique_lock<std::mutex> lock(v_mutex);
-	v_running = false;
-	v_instance = nullptr;
 	if (alutExit() != AL_TRUE) xemmai::f_throw(L"alutExit failed."sv);
+	v_instance = nullptr;
+	v_running.clear(std::memory_order_release);
 }
 
 namespace
