@@ -261,7 +261,7 @@ namespace xemmai
 template<>
 struct t_type_of<xemmaix::al::t_context> : t_uninstantiatable<xemmaix::al::t_holds<xemmaix::al::t_context>>
 {
-	typedef xemmaix::al::t_context t_context;
+	using t_context = xemmaix::al::t_context;
 
 	static void f_define(t_library* a_library);
 

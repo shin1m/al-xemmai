@@ -52,7 +52,7 @@ namespace xemmai
 template<>
 struct t_type_of<xemmaix::al::t_error> : t_uninstantiatable<t_bears<xemmaix::al::t_error, t_type_of<t_throwable>>>
 {
-	typedef xemmaix::al::t_library t_library;
+	using t_library = xemmaix::al::t_library;
 
 	static void f_define(t_library* a_library);
 
