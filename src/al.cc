@@ -7,7 +7,7 @@ namespace xemmaix::al
 
 using namespace xemmai;
 
-std::atomic_flag t_session::v_running = ATOMIC_FLAG_INIT;
+std::atomic_flag t_session::v_running;
 XEMMAI__PORTABLE__THREAD t_session* t_session::v_instance;
 
 t_session::t_session(t_library* a_library) : v_library(a_library)
