@@ -24,7 +24,7 @@ void t_type_of<xemmaix::al::t_error>::f_define(t_library* a_library)
 {
 	using namespace xemmaix::al;
 	t_define{a_library}
-		(L"error"sv, t_member<ALenum(t_error::*)() const, &t_error::f_error>())
+	(L"error"sv, t_member<ALenum(t_error::*)() const, &t_error::f_error>())
 	.f_derive<t_error, t_throwable>();
 	t_define{a_library}.f_derive<t_alc_error, t_error>();
 	t_define{a_library}.f_derive<t_alut_error, t_error>();

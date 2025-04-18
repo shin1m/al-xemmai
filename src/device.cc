@@ -64,8 +64,8 @@ void t_type_of<xemmaix::al::t_base_device>::f_define(t_library* a_library)
 {
 	using namespace xemmaix::al;
 	t_define{a_library}
-		(L"get_string"sv, t_member<std::wstring(t_base_device::*)(ALenum) const, &t_base_device::f_get_string>())
-		(L"get_integer"sv, t_member<ALint(t_base_device::*)(ALenum) const, &t_base_device::f_get_integer>())
+	(L"get_string"sv, t_member<std::wstring(t_base_device::*)(ALenum) const, &t_base_device::f_get_string>())
+	(L"get_integer"sv, t_member<ALint(t_base_device::*)(ALenum) const, &t_base_device::f_get_integer>())
 	.f_derive<t_base_device, t_object>();
 }
 
@@ -83,15 +83,15 @@ void t_type_of<xemmaix::al::t_device>::f_define(t_library* a_library)
 {
 	using namespace xemmaix::al;
 	t_define{a_library}
-		(L"close"sv, t_member<void(t_device::*)(), &t_device::f_close>())
-		(L"default_context"sv, t_member<t_pvalue(t_device::*)() const, &t_device::f_default_context>())
-		(L"create_context"sv, t_member<t_pvalue(t_device::*)(), &t_device::f_create_context>())
-		(L"create_buffer"sv, t_member<t_pvalue(t_device::*)(), &t_device::f_create_buffer>())
-		(L"create_buffer_from_file"sv, t_member<t_pvalue(t_device::*)(std::wstring_view), &t_device::f_create_buffer_from_file>())
-		(L"create_buffer_from_file_image"sv, t_member<t_pvalue(t_device::*)(const t_bytes&), &t_device::f_create_buffer_from_file_image>())
-		(L"create_buffer_hello_world"sv, t_member<t_pvalue(t_device::*)(), &t_device::f_create_buffer_hello_world>())
-		(L"create_buffer_waveform"sv, t_member<t_pvalue(t_device::*)(ALenum, ALfloat, ALfloat, ALfloat), &t_device::f_create_buffer_waveform>())
-		(L"get_mime_types"sv, t_member<std::wstring(t_device::*)(ALenum) const, &t_device::f_get_mime_types>())
+	(L"close"sv, t_member<void(t_device::*)(), &t_device::f_close>())
+	(L"default_context"sv, t_member<t_pvalue(t_device::*)() const, &t_device::f_default_context>())
+	(L"create_context"sv, t_member<t_pvalue(t_device::*)(), &t_device::f_create_context>())
+	(L"create_buffer"sv, t_member<t_pvalue(t_device::*)(), &t_device::f_create_buffer>())
+	(L"create_buffer_from_file"sv, t_member<t_pvalue(t_device::*)(std::wstring_view), &t_device::f_create_buffer_from_file>())
+	(L"create_buffer_from_file_image"sv, t_member<t_pvalue(t_device::*)(const t_bytes&), &t_device::f_create_buffer_from_file_image>())
+	(L"create_buffer_hello_world"sv, t_member<t_pvalue(t_device::*)(), &t_device::f_create_buffer_hello_world>())
+	(L"create_buffer_waveform"sv, t_member<t_pvalue(t_device::*)(ALenum, ALfloat, ALfloat, ALfloat), &t_device::f_create_buffer_waveform>())
+	(L"get_mime_types"sv, t_member<std::wstring(t_device::*)(ALenum) const, &t_device::f_get_mime_types>())
 	.f_derive<t_device, t_base_device>();
 }
 
@@ -104,10 +104,10 @@ void t_type_of<xemmaix::al::t_capture_device>::f_define(t_library* a_library)
 {
 	using namespace xemmaix::al;
 	t_define{a_library}
-		(L"close"sv, t_member<void(t_capture_device::*)(), &t_capture_device::f_close>())
-		(L"start"sv, t_member<void(t_capture_device::*)(), &t_capture_device::f_start>())
-		(L"stop"sv, t_member<void(t_capture_device::*)(), &t_capture_device::f_stop>())
-		(L"samples"sv, t_member<void(t_capture_device::*)(t_bytes&, ALCsizei), &t_capture_device::f_samples>())
+	(L"close"sv, t_member<void(t_capture_device::*)(), &t_capture_device::f_close>())
+	(L"start"sv, t_member<void(t_capture_device::*)(), &t_capture_device::f_start>())
+	(L"stop"sv, t_member<void(t_capture_device::*)(), &t_capture_device::f_stop>())
+	(L"samples"sv, t_member<void(t_capture_device::*)(t_bytes&, ALCsizei), &t_capture_device::f_samples>())
 	.f_derive<t_capture_device, t_base_device>();
 }
 

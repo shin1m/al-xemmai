@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
-project(al-xemmai VERSION 202411)
-find_package(xemmai 202411 REQUIRED)
+project(al-xemmai VERSION 202504)
+find_package(xemmai 202504 REQUIRED)
 find_package(OpenAL 1.1 REQUIRED)
 find_package(PkgConfig)
 pkg_check_modules(ALUT REQUIRED freealut>=1.1)
